@@ -26,11 +26,25 @@ if os.path.exists('.env'):
 # Importar módulo de análise RIGOROSA com IA
 from ai_analyzer_rigorous import analyze_document_rigorous
 
-# Importar validador TCEES
-from tcees_validator import validate_pdf_with_tcees, validate_multiple_pdfs
+# Importar validador TCEES (opcional - requer Selenium/Chrome)
+try:
+    from tcees_validator import validate_pdf_with_tcees, validate_multiple_pdfs
+    TCEES_AVAILABLE = True
+except ImportError:
+    print("⚠️  TCEES Validator não disponível (Selenium não instalado)")
+    TCEES_AVAILABLE = False
+    def validate_pdf_with_tcees(*args, **kwargs):
+        return {'success': False, 'error': 'TCEES não disponível neste ambiente'}
+    def validate_multiple_pdfs(*args, **kwargs):
+        return []
 
-# Importar assinador digital
-from digital_signer import digital_signer, PYHANKO_AVAILABLE
+# Importar assinador digital (opcional)
+try:
+    from digital_signer import digital_signer, PYHANKO_AVAILABLE
+except ImportError:
+    print("⚠️  Digital Signer não disponível")
+    PYHANKO_AVAILABLE = False
+    digital_signer = None
 
 app = Flask(__name__)
 app.secret_key = 'sua_chave_secreta_super_segura_aqui_12345'
