@@ -1,0 +1,114 @@
+{% extends "base.html" %}
+
+{% block title %}Cadastro - Sistema de Credenciamento RPPS{% endblock %}
+
+{% block content %}
+<div class="container">
+    <div class="card">
+        <div class="logo">
+            <img src="{{ url_for('static', filename='images/SMART CREDENCIAMENTO.png') }}" 
+                 alt="Smart Credenciamento" 
+                 style="max-width: 400px; width: 100%; height: auto; margin-bottom: 24px;">
+        </div>
+
+        <div id="alert" style="display: none;"></div>
+
+        <form id="registerForm">
+            <div class="form-group">
+                <label for="name">Nome Completo</label>
+                <input type="text" id="name" name="name" required placeholder="Seu nome completo">
+            </div>
+
+            <div class="form-group">
+                <label for="email">Email</label>
+                <input type="email" id="email" name="email" required placeholder="seu@email.com">
+            </div>
+
+            <div class="form-group">
+                <label for="cpf_cnpj">CPF/CNPJ</label>
+                <input type="text" id="cpf_cnpj" name="cpf_cnpj" required placeholder="000.000.000-00">
+            </div>
+
+            <div class="form-group">
+                <label for="role">Tipo de Usuário</label>
+                <select id="role" name="role" required>
+                    <option value="">Selecione...</option>
+                    <option value="rpps">RPPS</option>
+                    <option value="financial_institution">Instituição Financeira</option>
+                </select>
+            </div>
+
+            <div class="form-group">
+                <label for="password">Senha</label>
+                <input type="password" id="password" name="password" required placeholder="••••••••">
+            </div>
+
+            <div class="form-group">
+                <label for="confirm_password">Confirmar Senha</label>
+                <input type="password" id="confirm_password" name="confirm_password" required placeholder="••••••••">
+            </div>
+
+            <button type="submit" class="btn btn-primary">Cadastrar</button>
+        </form>
+
+        <div class="link">
+            Já tem uma conta? <a href="/login">Faça login</a>
+        </div>
+    </div>
+</div>
+
+<script>
+document.getElementById('registerForm').addEventListener('submit', async (e) => {
+    e.preventDefault();
+    
+    const name = document.getElementById('name').value;
+    const email = document.getElementById('email').value;
+    const cpf_cnpj = document.getElementById('cpf_cnpj').value;
+    const role = document.getElementById('role').value;
+    const password = document.getElementById('password').value;
+    const confirm_password = document.getElementById('confirm_password').value;
+    const alertDiv = document.getElementById('alert');
+    
+    if (password !== confirm_password) {
+        alertDiv.className = 'alert alert-error';
+        alertDiv.textContent = 'As senhas não coincidem';
+        alertDiv.style.display = 'block';
+        return;
+    }
+    
+    try {
+        const response = await fetch('/register', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({ name, email, cpf_cnpj, role, password })
+        });
+        
+        const data = await response.json();
+        
+        if (data.success) {
+            alertDiv.className = 'alert alert-success';
+            alertDiv.textContent = 'Cadastro realizado com sucesso!';
+            alertDiv.style.display = 'block';
+            
+            setTimeout(() => {
+                if (data.role === 'rpps') {
+                    window.location.href = '/rpps/home';
+                } else {
+                    window.location.href = '/financial/home';
+                }
+            }, 500);
+        } else {
+            alertDiv.className = 'alert alert-error';
+            alertDiv.textContent = data.error || 'Erro ao criar conta';
+            alertDiv.style.display = 'block';
+        }
+    } catch (error) {
+        alertDiv.className = 'alert alert-error';
+        alertDiv.textContent = 'Erro ao conectar com o servidor';
+        alertDiv.style.display = 'block';
+    }
+});
+</script>
+{% endblock %}

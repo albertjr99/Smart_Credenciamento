@@ -1,0 +1,321 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Home - Instituição Financeira</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: #f8fafc;
+            min-height: 100vh;
+        }
+
+        .navbar {
+            background: white;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+            padding: 20px 40px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .navbar-brand {
+            font-size: 24px;
+            font-weight: 700;
+            color: #667eea;
+        }
+
+        .navbar-user {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .btn-logout {
+            padding: 8px 16px;
+            background: #fee2e2;
+            color: #ef4444;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: 600;
+            font-size: 14px;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 40px 20px;
+        }
+
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 30px;
+        }
+
+        .header h1 {
+            font-size: 32px;
+            color: #1f2937;
+        }
+
+        .header p {
+            color: #6b7280;
+            margin-top: 5px;
+        }
+
+        .btn-new {
+            padding: 12px 24px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            border-radius: 10px;
+            cursor: pointer;
+            font-weight: 600;
+            font-size: 16px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .btn-new:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 16px rgba(102, 126, 234, 0.4);
+        }
+
+        .process-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+            gap: 20px;
+        }
+
+        .process-card {
+            background: white;
+            border-radius: 16px;
+            padding: 24px;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .process-card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 8px 24px rgba(0, 0, 0, 0.1);
+        }
+
+        .process-header {
+            display: flex;
+            align-items: flex-start;
+            gap: 12px;
+            margin-bottom: 16px;
+        }
+
+        .process-icon {
+            width: 48px;
+            height: 48px;
+            background: #eff6ff;
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 24px;
+        }
+
+        .process-info {
+            flex: 1;
+        }
+
+        .process-type {
+            font-size: 18px;
+            font-weight: 700;
+            color: #1f2937;
+            text-transform: uppercase;
+            margin-bottom: 4px;
+        }
+
+        .process-date {
+            font-size: 13px;
+            color: #6b7280;
+        }
+
+        .status-badge {
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 600;
+        }
+
+        .status-draft { background: #f1f5f9; color: #64748b; }
+        .status-submitted { background: #fef3c7; color: #f59e0b; }
+        .status-under_review { background: #dbeafe; color: #3b82f6; }
+        .status-approved { background: #d1fae5; color: #10b981; }
+        .status-rejected { background: #fee2e2; color: #ef4444; }
+
+        .process-footer {
+            padding-top: 16px;
+            border-top: 1px solid #f3f4f6;
+            color: #6b7280;
+            font-size: 14px;
+        }
+
+        .empty-state {
+            text-align: center;
+            padding: 60px 20px;
+            background: white;
+            border-radius: 16px;
+        }
+
+        .empty-state-icon {
+            font-size: 64px;
+            margin-bottom: 20px;
+            opacity: 0.3;
+        }
+
+        .empty-state h2 {
+            color: #1f2937;
+            margin-bottom: 10px;
+        }
+
+        .empty-state p {
+            color: #6b7280;
+        }
+
+        .loading {
+            text-align: center;
+            padding: 60px;
+        }
+
+        .spinner {
+            border: 4px solid #f3f4f6;
+            border-top: 4px solid #667eea;
+            border-radius: 50%;
+            width: 50px;
+            height: 50px;
+            animation: spin 1s linear infinite;
+            margin: 0 auto;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+    </style>
+</head>
+<body>
+    <nav class="navbar">
+        <div class="navbar-brand">🏛️ RPPS - Instituição Financeira</div>
+        <div class="navbar-user">
+            <span id="userName"></span>
+            <button class="btn-logout" onclick="logout()">🚪 Sair</button>
+        </div>
+    </nav>
+
+    <div class="container">
+        <div class="header">
+            <div>
+                <h1>Meus Credenciamentos</h1>
+                <p>Gerencie seus processos de credenciamento</p>
+            </div>
+            <button class="btn-new" onclick="window.location.href='/financial/new-process'">
+                ➕ Novo Credenciamento
+            </button>
+        </div>
+
+        <div id="content">
+            <div class="loading">
+                <div class="spinner"></div>
+                <p style="margin-top: 20px; color: #6b7280;">Carregando processos...</p>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        async function loadProcesses() {
+            try {
+                const response = await fetch('/api/financial/processes');
+                const processes = await response.json();
+                
+                const content = document.getElementById('content');
+                
+                if (processes.length === 0) {
+                    content.innerHTML = `
+                        <div class="empty-state">
+                            <div class="empty-state-icon">📄</div>
+                            <h2>Nenhum credenciamento iniciado</h2>
+                            <p>Clique em "Novo Credenciamento" para começar</p>
+                        </div>
+                    `;
+                } else {
+                    const grid = document.createElement('div');
+                    grid.className = 'process-grid';
+                    
+                    processes.forEach(process => {
+                        const card = createProcessCard(process);
+                        grid.appendChild(card);
+                    });
+                    
+                    content.innerHTML = '';
+                    content.appendChild(grid);
+                }
+            } catch (error) {
+                console.error('Erro ao carregar processos:', error);
+                document.getElementById('content').innerHTML = `
+                    <div class="empty-state">
+                        <h2>Erro ao carregar processos</h2>
+                        <p>Tente novamente mais tarde</p>
+                    </div>
+                `;
+            }
+        }
+
+        function createProcessCard(process) {
+            const card = document.createElement('div');
+            card.className = 'process-card';
+            card.onclick = () => window.location.href = `/financial/process/${process.id}`;
+            
+            const statusText = {
+                'draft': 'Rascunho',
+                'submitted': 'Enviado',
+                'under_review': 'Em Análise',
+                'approved': 'Aprovado',
+                'rejected': 'Rejeitado'
+            };
+            
+            card.innerHTML = `
+                <div class="process-header">
+                    <div class="process-icon">📋</div>
+                    <div class="process-info">
+                        <div class="process-type">${process.credentialing_type}</div>
+                        <div class="process-date">Criado em ${new Date(process.created_at).toLocaleDateString('pt-BR')}</div>
+                    </div>
+                    <span class="status-badge status-${process.status}">
+                        ${statusText[process.status]}
+                    </span>
+                </div>
+                <div class="process-footer">
+                    📎 ${process.document_count} documento(s) enviado(s)
+                </div>
+            `;
+            
+            return card;
+        }
+
+        function logout() {
+            if (confirm('Deseja realmente sair?')) {
+                window.location.href = '/logout';
+            }
+        }
+
+        // Carregar processos ao iniciar
+        loadProcesses();
+    </script>
+</body>
+</html>

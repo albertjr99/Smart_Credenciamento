@@ -1,0 +1,579 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Novo Credenciamento - Sistema de Credenciamento RPPS</title>
+    <style>
+        :root {
+            --primary-800: #0369a1;
+            --primary-500: #0ea5e9;
+            --neutral-900: #0f172a;
+            --neutral-800: #1e293b;
+            --neutral-700: #334155;
+            --neutral-500: #64748b;
+            --neutral-400: #94a3b8;
+            --neutral-200: #e2e8f0;
+            --neutral-100: #f1f5f9;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: #0f172a;
+            min-height: 100vh;
+            position: relative;
+            overflow-x: hidden;
+            color: #e2e8f0;
+        }
+
+        /* ANIMAÇÃO TECH DE PARTÍCULAS */
+        #particles-canvas {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 0;
+        }
+
+        .navbar-modern, .container-pro {
+            position: relative;
+            z-index: 1;
+        }
+
+        .navbar-modern {
+            background: linear-gradient(135deg, #0a1628 0%, #0c2340 100%);
+            border-bottom: none;
+            padding: 0 48px;
+            height: 64px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+        }
+
+        .navbar-modern::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            height: 1px;
+            background: linear-gradient(90deg, transparent, rgba(14, 165, 233, 0.5), transparent);
+        }
+
+        .navbar-brand {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+        }
+
+        .brand-logo img {
+            height: 80px;
+            object-fit: contain;
+            margin-right: 16px;
+            filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.3));
+        }
+
+        .brand-title {
+            font-size: 1.25rem;
+            font-weight: 700;
+            color: white;
+            letter-spacing: -0.025em;
+        }
+
+        .brand-subtitle {
+            font-size: 0.75rem;
+            color: rgba(255, 255, 255, 0.85);
+            font-weight: 500;
+            letter-spacing: 0.5px;
+            text-transform: uppercase;
+        }
+
+        .btn-back {
+            padding: 12px 24px;
+            background: rgba(255, 255, 255, 0.1);
+            color: white;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            border-radius: 12px;
+            cursor: pointer;
+            font-weight: 600;
+            font-size: 0.9rem;
+            transition: all 0.3s ease;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .btn-back:hover {
+            background: rgba(255, 255, 255, 0.15);
+            transform: translateX(-4px);
+        }
+
+        .container-pro {
+            max-width: 700px;
+            margin: 50px auto;
+            padding: 0 24px;
+            position: relative;
+            z-index: 1;
+        }
+
+        /* ========================================
+           CARD PREMIUM - DARK THEME
+           ======================================== */
+        .card-pro {
+            background: linear-gradient(135deg, rgba(30, 41, 59, 0.8) 0%, rgba(15, 23, 42, 0.9) 100%);
+            backdrop-filter: blur(20px);
+            border-radius: 20px;
+            padding: 36px;
+            border: 1px solid rgba(148, 163, 184, 0.15);
+            position: relative;
+            overflow: hidden;
+            /* Efeito 3D */
+            box-shadow: 
+                0 4px 6px rgba(0, 0, 0, 0.3),
+                0 10px 20px rgba(0, 0, 0, 0.25),
+                0 1px 0 rgba(255, 255, 255, 0.05) inset,
+                0 -2px 10px rgba(0, 0, 0, 0.2) inset;
+            transform: perspective(1000px) rotateX(1deg);
+            transform-style: preserve-3d;
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        .card-pro:hover {
+            transform: perspective(1000px) rotateX(0deg) translateY(-6px);
+            box-shadow: 
+                0 15px 35px rgba(0, 0, 0, 0.4),
+                0 25px 50px rgba(0, 0, 0, 0.3),
+                0 0 50px rgba(14, 165, 233, 0.1),
+                0 1px 0 rgba(255, 255, 255, 0.1) inset;
+        }
+
+        .card-pro::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 1px;
+            background: linear-gradient(90deg, transparent, rgba(14, 165, 233, 0.5), transparent);
+        }
+
+        .heading-xl {
+            font-size: 2rem;
+            font-weight: 700;
+            color: #f1f5f9;
+            letter-spacing: -0.025em;
+            margin-bottom: 12px;
+            background: linear-gradient(135deg, #38bdf8 0%, #22d3ee 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            display: inline-block;
+        }
+
+        .subtitle {
+            font-size: 0.95rem;
+            color: #94a3b8;
+            margin-bottom: 40px;
+        }
+
+        .form-group {
+            margin-bottom: 32px;
+        }
+
+        .form-label {
+            display: block;
+            font-size: 0.75rem;
+            font-weight: 600;
+            color: #94a3b8;
+            margin-bottom: 16px;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+        }
+
+        /* ========================================
+           TYPE OPTIONS PREMIUM
+           ======================================== */
+        .type-option {
+            display: flex;
+            align-items: flex-start;
+            padding: 24px;
+            border: 1px solid rgba(148, 163, 184, 0.15);
+            border-radius: 16px;
+            margin-bottom: 16px;
+            cursor: pointer;
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            background: rgba(15, 23, 42, 0.5);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .type-option::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.03), transparent);
+            transition: left 0.5s ease;
+        }
+
+        .type-option:hover::before {
+            left: 100%;
+        }
+
+        .type-option:hover {
+            border-color: rgba(14, 165, 233, 0.4);
+            transform: translateX(8px);
+        }
+
+        .type-option.selected {
+            border-color: rgba(14, 165, 233, 0.5);
+            background: rgba(14, 165, 233, 0.1);
+            box-shadow: 0 8px 24px rgba(14, 165, 233, 0.15);
+        }
+
+        .type-option input[type="radio"] {
+            margin-right: 16px;
+            margin-top: 4px;
+            width: 22px;
+            height: 22px;
+            cursor: pointer;
+            accent-color: #0ea5e9;
+        }
+
+        .option-content {
+            flex: 1;
+        }
+
+        .type-option-title {
+            font-weight: 600;
+            font-size: 1.1rem;
+            color: #f1f5f9;
+            margin-bottom: 8px;
+        }
+
+        .type-option-desc {
+            font-size: 0.9rem;
+            color: #94a3b8;
+        }
+
+        /* ========================================
+           BUTTON PREMIUM
+           ======================================== */
+        .btn-pro {
+            width: 100%;
+            padding: 18px 24px;
+            background: linear-gradient(135deg, #0ea5e9 0%, #38bdf8 100%);
+            color: white;
+            border: 1px solid rgba(14, 165, 233, 0.3);
+            border-radius: 14px;
+            cursor: pointer;
+            font-weight: 600;
+            font-size: 1rem;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+        }
+
+        .btn-pro:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 12px 24px rgba(14, 165, 233, 0.3);
+        }
+
+        .btn-pro:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        /* ========================================
+           ALERTS PREMIUM
+           ======================================== */
+        .alert {
+            padding: 16px 20px;
+            border-radius: 12px;
+            margin-bottom: 28px;
+            font-size: 0.9rem;
+            font-weight: 500;
+        }
+
+        .alert-error {
+            background: rgba(239, 68, 68, 0.1);
+            color: #f87171;
+            border: 1px solid rgba(239, 68, 68, 0.2);
+        }
+
+        .alert-success {
+            background: rgba(16, 185, 129, 0.1);
+            color: #34d399;
+            border: 1px solid rgba(16, 185, 129, 0.2);
+        }
+
+        /* ========================================
+           RESPONSIVIDADE
+           ======================================== */
+        @media (max-width: 768px) {
+            .navbar-modern {
+                padding: 0 20px;
+                height: 64px;
+            }
+            
+            .brand-logo img {
+                height: 48px;
+            }
+            
+            .container-pro {
+                padding: 0 16px;
+                margin: 32px auto;
+            }
+            
+            .card-pro {
+                padding: 32px 24px;
+            }
+            
+            .heading-xl {
+                font-size: 1.5rem;
+            }
+            
+            .type-option {
+                padding: 20px;
+            }
+            
+            .type-option-title {
+                font-size: 1rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Canvas para Animação Tech de Partículas -->
+    <canvas id="particles-canvas"></canvas>
+
+    <nav class="navbar-modern">
+        <div class="navbar-brand">
+            <img src="{{ url_for('static', filename='images/só o simbolo.png') }}?v=10" 
+                 alt="Logo" 
+                 style="height: 80px; object-fit: contain; margin-right: 16px; filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.3));"
+                 onerror="this.style.display='none'">
+            <div>
+                <div class="brand-title">Smart Credenciamento</div>
+                <div class="brand-subtitle">Portal da Instituição Financeira</div>
+            </div>
+        </div>
+        <button class="btn-back" onclick="window.location.href='/financial/home'">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <line x1="19" y1="12" x2="5" y2="12"></line>
+                <polyline points="12 19 5 12 12 5"></polyline>
+            </svg>
+            Voltar
+        </button>
+    </nav>
+
+    <div class="container-pro">
+        <div class="card-pro">
+            <h1 class="heading-xl">Novo Credenciamento</h1>
+            <p class="subtitle">Selecione o tipo de credenciamento que deseja iniciar</p>
+
+            <div id="alert" style="display: none;"></div>
+
+            <form id="newProcessForm">
+                <div class="form-group">
+                    <label class="form-label">Tipo de Credenciamento:</label>
+                    
+                    <label class="type-option">
+                        <input type="radio" name="type" value="gestor" required>
+                        <div class="option-content">
+                            <div class="type-option-title">Gestor de Recursos</div>
+                            <div class="type-option-desc">Credenciamento para gestão de investimentos</div>
+                        </div>
+                    </label>
+
+                    <label class="type-option">
+                        <input type="radio" name="type" value="administrador" required>
+                        <div class="option-content">
+                            <div class="type-option-title">Administrador</div>
+                            <div class="type-option-desc">Credenciamento para administração de carteiras</div>
+                        </div>
+                    </label>
+
+                    <label class="type-option">
+                        <input type="radio" name="type" value="distribuidor" required>
+                        <div class="option-content">
+                            <div class="type-option-title">Distribuidor</div>
+                            <div class="type-option-desc">Credenciamento para distribuição de produtos</div>
+                        </div>
+                    </label>
+                </div>
+
+                <button type="submit" class="btn-pro" id="submitBtn">
+                    Criar Processo
+                </button>
+            </form>
+        </div>
+    </div>
+
+    <script>
+        // Adicionar classe selected ao clicar
+        document.querySelectorAll('.type-option').forEach(option => {
+            option.addEventListener('click', () => {
+                document.querySelectorAll('.type-option').forEach(opt => {
+                    opt.classList.remove('selected');
+                });
+                option.classList.add('selected');
+                option.querySelector('input[type="radio"]').checked = true;
+            });
+        });
+
+        document.getElementById('newProcessForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            
+            const selectedType = document.querySelector('input[name="type"]:checked');
+            if (!selectedType) {
+                return;
+            }
+            
+            const alertDiv = document.getElementById('alert');
+            const submitBtn = document.getElementById('submitBtn');
+            
+            submitBtn.disabled = true;
+            submitBtn.textContent = 'Criando...';
+            
+            try {
+                const response = await fetch('/api/financial/create-process', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        type: selectedType.value
+                    })
+                });
+                
+                const data = await response.json();
+                
+                if (data.success) {
+                    alertDiv.className = 'alert alert-success';
+                    alertDiv.textContent = 'Processo criado com sucesso! Redirecionando...';
+                    alertDiv.style.display = 'block';
+                    
+                    setTimeout(() => {
+                        window.location.href = `/financial/process/${data.process_id}`;
+                    }, 1000);
+                } else {
+                    alertDiv.className = 'alert alert-error';
+                    alertDiv.textContent = data.message || 'Erro ao criar processo';
+                    alertDiv.style.display = 'block';
+                    submitBtn.disabled = false;
+                    submitBtn.textContent = 'Criar Processo';
+                }
+            } catch (error) {
+                alertDiv.className = 'alert alert-error';
+                alertDiv.textContent = 'Erro ao criar processo. Tente novamente.';
+                alertDiv.style.display = 'block';
+                submitBtn.disabled = false;
+                submitBtn.textContent = 'Criar Processo';
+            }
+        });
+    </script>
+
+    <!-- Script da Animação Tech de Partículas - Versão Equilibrada -->
+    <script>
+        (function() {
+            const canvas = document.getElementById('particles-canvas');
+            const ctx = canvas.getContext('2d');
+            let particles = [];
+            const particleCount = 60;
+            const connectionDistance = 150;
+            const mouseRadius = 150;
+            let mouse = { x: null, y: null };
+            let time = 0;
+            
+            function resizeCanvas() {
+                canvas.width = window.innerWidth;
+                canvas.height = Math.max(document.documentElement.scrollHeight, window.innerHeight);
+            }
+            
+            class Particle {
+                constructor() {
+                    this.x = Math.random() * canvas.width;
+                    this.y = Math.random() * canvas.height;
+                    this.baseSize = Math.random() * 1.5 + 1;
+                    this.size = this.baseSize;
+                    this.speedX = (Math.random() - 0.5) * 0.4;
+                    this.speedY = (Math.random() - 0.5) * 0.4;
+                    this.pulseOffset = Math.random() * Math.PI * 2;
+                }
+                update() {
+                    this.x += this.speedX;
+                    this.y += this.speedY;
+                    this.size = this.baseSize + Math.sin(time * 0.015 + this.pulseOffset) * 0.3;
+                    if (this.x < 0 || this.x > canvas.width) this.speedX *= -1;
+                    if (this.y < 0 || this.y > canvas.height) this.speedY *= -1;
+                    if (mouse.x !== null) {
+                        const dx = mouse.x - this.x, dy = (mouse.y + window.scrollY) - this.y;
+                        const dist = Math.sqrt(dx * dx + dy * dy);
+                        if (dist < mouseRadius && dist > 30) {
+                            this.x += dx * ((mouseRadius - dist) / mouseRadius * 0.015);
+                            this.y += dy * ((mouseRadius - dist) / mouseRadius * 0.015);
+                        }
+                    }
+                }
+                draw() {
+                    const gradient = ctx.createRadialGradient(this.x, this.y, 0, this.x, this.y, this.size * 2.5);
+                    gradient.addColorStop(0, 'rgba(59, 130, 246, 0.4)');
+                    gradient.addColorStop(0.5, 'rgba(59, 130, 246, 0.15)');
+                    gradient.addColorStop(1, 'rgba(59, 130, 246, 0)');
+                    ctx.beginPath(); ctx.arc(this.x, this.y, this.size * 2.5, 0, Math.PI * 2); ctx.fillStyle = gradient; ctx.fill();
+                    ctx.beginPath(); ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2); ctx.fillStyle = 'rgba(59, 130, 246, 0.6)'; ctx.fill();
+                }
+            }
+            function initParticles() { particles = []; for (let i = 0; i < particleCount; i++) particles.push(new Particle()); }
+            function connectParticles() {
+                for (let i = 0; i < particles.length; i++) {
+                    for (let j = i + 1; j < particles.length; j++) {
+                        const dx = particles[i].x - particles[j].x, dy = particles[i].y - particles[j].y;
+                        const distance = Math.sqrt(dx * dx + dy * dy);
+                        if (distance < connectionDistance) {
+                            ctx.beginPath(); ctx.strokeStyle = `rgba(59, 130, 246, ${(1 - distance / connectionDistance) * 0.25})`;
+                            ctx.lineWidth = 1; ctx.moveTo(particles[i].x, particles[i].y); ctx.lineTo(particles[j].x, particles[j].y); ctx.stroke();
+                        }
+                    }
+                }
+                if (mouse.x !== null) {
+                    const mouseY = mouse.y + window.scrollY;
+                    particles.forEach(p => {
+                        const dx = p.x - mouse.x, dy = p.y - mouseY, distance = Math.sqrt(dx * dx + dy * dy);
+                        if (distance < mouseRadius) {
+                            ctx.beginPath(); ctx.strokeStyle = `rgba(96, 165, 250, ${(1 - distance / mouseRadius) * 0.3})`;
+                            ctx.lineWidth = 1; ctx.moveTo(p.x, p.y); ctx.lineTo(mouse.x, mouseY); ctx.stroke();
+                        }
+                    });
+                }
+            }
+            function animate() { ctx.clearRect(0, 0, canvas.width, canvas.height); time++; particles.forEach(p => { p.update(); p.draw(); }); connectParticles(); requestAnimationFrame(animate); }
+            window.addEventListener('resize', () => { resizeCanvas(); initParticles(); });
+            window.addEventListener('scroll', () => { resizeCanvas(); });
+            document.addEventListener('mousemove', (e) => { mouse.x = e.clientX; mouse.y = e.clientY; });
+            document.addEventListener('mouseleave', () => { mouse.x = null; mouse.y = null; });
+            resizeCanvas(); initParticles(); animate();
+        })();
+    </script>
+</body>
+</html>

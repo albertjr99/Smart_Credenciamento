@@ -1,0 +1,1065 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Análise de Conformidade - Sistema de Credenciamento</title>
+    <link rel="icon" type="image/png" href="{{ url_for('static', filename='images/só o simbolo.png') }}?v=10">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        html, body {
+            margin: 0;
+            padding: 0;
+            height: 100%;
+            background-color: #0f172a !important;
+        }
+
+        #particles-canvas {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 0;
+        }
+
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: #0f172a !important;
+            min-height: 100vh;
+            padding: 32px 16px;
+            color: #ffffff;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            position: relative;
+            z-index: 1;
+        }
+
+        .header {
+            background: rgba(30, 41, 59, 0.7);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border-radius: 16px;
+            padding: 28px;
+            margin-bottom: 24px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            position: relative;
+        }
+
+        .header::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 1px;
+            background: linear-gradient(90deg, transparent, rgba(59, 130, 246, 0.5), transparent);
+            border-radius: 16px 16px 0 0;
+        }
+
+        .header-title {
+            font-size: 1.5rem;
+            font-weight: 700;
+            background: linear-gradient(135deg, #ffffff 0%, #60a5fa 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .header-title svg {
+            width: 28px;
+            height: 28px;
+            fill: none;
+            stroke: #3b82f6;
+            stroke-width: 2;
+        }
+
+        .process-info {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 16px;
+        }
+
+        .info-item {
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+        }
+
+        .info-label {
+            font-size: 0.75rem;
+            text-transform: uppercase;
+            color: rgba(255, 255, 255, 0.5);
+            font-weight: 600;
+            letter-spacing: 0.5px;
+        }
+
+        .info-value {
+            font-size: 0.938rem;
+            color: #ffffff;
+            font-weight: 600;
+        }
+
+        .summary-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+            gap: 16px;
+            margin-bottom: 24px;
+        }
+
+        .summary-card {
+            background: rgba(30, 41, 59, 0.7);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border-radius: 14px;
+            padding: 20px;
+            border: 1px solid rgba(255, 255, 255, 0.15);
+            position: relative;
+            overflow: hidden;
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            /* Efeito 3D */
+            box-shadow: 
+                0 4px 6px rgba(0, 0, 0, 0.3),
+                0 10px 20px rgba(0, 0, 0, 0.25),
+                0 1px 0 rgba(255, 255, 255, 0.05) inset,
+                0 -2px 10px rgba(0, 0, 0, 0.2) inset;
+            transform: perspective(1000px) rotateX(2deg);
+            transform-style: preserve-3d;
+        }
+
+        .summary-card:hover {
+            transform: perspective(1000px) rotateX(0deg) translateY(-8px) scale(1.02);
+            box-shadow: 
+                0 20px 40px rgba(0, 0, 0, 0.4),
+                0 30px 60px rgba(0, 0, 0, 0.3),
+                0 0 50px rgba(59, 130, 246, 0.1),
+                0 1px 0 rgba(255, 255, 255, 0.1) inset;
+        }
+
+        .summary-card::before {
+            content: '';
+            position: absolute;
+            left: 0;
+            top: 0;
+            bottom: 0;
+            width: 4px;
+        }
+
+        .summary-card.approved::before {
+            background: linear-gradient(180deg, #10b981, #34d399);
+        }
+
+        .summary-card.warning::before {
+            background: linear-gradient(180deg, #f59e0b, #fbbf24);
+        }
+
+        .summary-card.rejected::before {
+            background: linear-gradient(180deg, #ef4444, #f87171);
+        }
+
+        .summary-card.score::before {
+            background: linear-gradient(180deg, #3b82f6, #60a5fa);
+        }
+
+        .card-label {
+            font-size: 0.75rem;
+            text-transform: uppercase;
+            color: rgba(255, 255, 255, 0.5);
+            font-weight: 600;
+            margin-bottom: 10px;
+            letter-spacing: 0.5px;
+        }
+
+        .card-value {
+            font-size: 2.5rem;
+            font-weight: 800;
+            color: #ffffff;
+        }
+
+        .summary-card.approved .card-value { color: #34d399; }
+        .summary-card.rejected .card-value { color: #f87171; }
+        .summary-card.warning .card-value { color: #fbbf24; }
+        .summary-card.score .card-value { color: #60a5fa; }
+
+        .card-subtitle {
+            font-size: 0.813rem;
+            color: rgba(255, 255, 255, 0.5);
+            margin-top: 6px;
+        }
+
+        .documents-section {
+            background: rgba(30, 41, 59, 0.7);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border-radius: 16px;
+            padding: 28px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .section-title {
+            font-size: 1.125rem;
+            font-weight: 700;
+            color: #ffffff;
+            margin-bottom: 24px;
+            padding-bottom: 16px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .section-title svg {
+            width: 22px;
+            height: 22px;
+            stroke: #60a5fa;
+            fill: none;
+            stroke-width: 2;
+        }
+
+        .document-card {
+            background: rgba(15, 23, 42, 0.6);
+            border-radius: 12px;
+            padding: 24px;
+            margin-bottom: 16px;
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            transition: all 0.3s ease;
+        }
+
+        .document-card:hover {
+            border-color: rgba(59, 130, 246, 0.3);
+        }
+
+        .document-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 16px;
+        }
+
+        .document-name {
+            font-size: 1rem;
+            font-weight: 600;
+            color: #ffffff;
+        }
+
+        .document-type {
+            font-size: 0.813rem;
+            color: rgba(255, 255, 255, 0.5);
+            margin-top: 4px;
+        }
+
+        .status-badge {
+            padding: 8px 16px;
+            border-radius: 20px;
+            font-size: 0.75rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .status-badge.approved {
+            background: rgba(16, 185, 129, 0.2);
+            color: #34d399;
+            border: 1px solid rgba(16, 185, 129, 0.3);
+        }
+
+        .status-badge.rejected {
+            background: rgba(239, 68, 68, 0.2);
+            color: #f87171;
+            border: 1px solid rgba(239, 68, 68, 0.3);
+        }
+
+        .status-badge.analyzing {
+            background: rgba(59, 130, 246, 0.2);
+            color: #60a5fa;
+            border: 1px solid rgba(59, 130, 246, 0.3);
+        }
+
+        .score-section {
+            margin-bottom: 16px;
+        }
+
+        .score-label {
+            font-size: 0.813rem;
+            color: rgba(255, 255, 255, 0.7);
+            margin-bottom: 10px;
+        }
+
+        .score-bar {
+            width: 100%;
+            height: 10px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 5px;
+            overflow: hidden;
+        }
+
+        .score-fill {
+            height: 100%;
+            transition: width 0.5s ease;
+            border-radius: 5px;
+        }
+
+        .score-fill.high {
+            background: linear-gradient(90deg, #10b981, #34d399);
+        }
+
+        .score-fill.medium {
+            background: linear-gradient(90deg, #f59e0b, #fbbf24);
+        }
+
+        .score-fill.low {
+            background: linear-gradient(90deg, #ef4444, #f87171);
+        }
+
+        .analysis-details {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+            gap: 12px;
+            margin-bottom: 16px;
+        }
+
+        .detail-item {
+            background: rgba(30, 41, 59, 0.5);
+            padding: 14px;
+            border-radius: 10px;
+            border: 1px solid rgba(255, 255, 255, 0.08);
+        }
+
+        .detail-label {
+            font-size: 0.7rem;
+            color: rgba(255, 255, 255, 0.5);
+            text-transform: uppercase;
+            font-weight: 600;
+            margin-bottom: 6px;
+            letter-spacing: 0.3px;
+        }
+
+        .detail-value {
+            font-size: 0.938rem;
+            color: #ffffff;
+            font-weight: 700;
+        }
+
+        .detail-value.success {
+            color: #34d399;
+        }
+
+        .detail-value.error {
+            color: #f87171;
+        }
+
+        .issues-section {
+            margin-top: 16px;
+        }
+
+        .issues-title {
+            font-size: 0.875rem;
+            font-weight: 600;
+            color: #ffffff;
+            margin-bottom: 12px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .issue-item {
+            padding: 14px 18px;
+            margin-bottom: 8px;
+            border-radius: 10px;
+            border-left: 3px solid;
+            font-size: 0.875rem;
+            line-height: 1.6;
+        }
+
+        .issue-item.error {
+            background: rgba(239, 68, 68, 0.1);
+            border-color: #ef4444;
+            color: #fca5a5;
+        }
+
+        .issue-item.warning {
+            background: rgba(245, 158, 11, 0.1);
+            border-color: #f59e0b;
+            color: #fcd34d;
+        }
+
+        .issue-item.success {
+            background: rgba(16, 185, 129, 0.1);
+            border-color: #10b981;
+            color: #6ee7b7;
+        }
+
+        .actions {
+            margin-top: 32px;
+            display: flex;
+            justify-content: center;
+            gap: 16px;
+            flex-wrap: wrap;
+        }
+
+        .btn {
+            padding: 14px 28px;
+            border-radius: 12px;
+            font-size: 0.938rem;
+            font-weight: 600;
+            border: none;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .btn svg {
+            width: 18px;
+            height: 18px;
+            stroke: currentColor;
+            fill: none;
+            stroke-width: 2;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, #1e3a8a 0%, #3b82f6 100%);
+            color: white;
+            box-shadow: 0 4px 15px rgba(59, 130, 246, 0.4);
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(59, 130, 246, 0.5);
+        }
+
+        .btn-secondary {
+            background: rgba(255, 255, 255, 0.1);
+            color: #ffffff;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+
+        .btn-secondary:hover {
+            background: rgba(255, 255, 255, 0.15);
+            transform: translateY(-2px);
+        }
+
+        .loading {
+            text-align: center;
+            padding: 60px;
+            color: rgba(255, 255, 255, 0.5);
+        }
+
+        .empty-state {
+            text-align: center;
+            padding: 60px 20px;
+            color: rgba(255, 255, 255, 0.5);
+        }
+
+        /* Validation box premium */
+        .validation-box {
+            margin-top: 16px;
+            border-radius: 12px;
+            padding: 20px;
+            border: 1px solid;
+        }
+
+        .validation-box.valid {
+            background: rgba(16, 185, 129, 0.1);
+            border-color: rgba(16, 185, 129, 0.3);
+        }
+
+        .validation-box.invalid {
+            background: rgba(239, 68, 68, 0.1);
+            border-color: rgba(239, 68, 68, 0.3);
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .header-title {
+                font-size: 1.25rem;
+            }
+
+            .process-info {
+                grid-template-columns: repeat(2, 1fr);
+            }
+
+            .summary-grid {
+                grid-template-columns: 1fr 1fr;
+            }
+
+            .card-value {
+                font-size: 2rem;
+            }
+
+            .actions {
+                flex-direction: column;
+            }
+
+            .btn {
+                width: 100%;
+                justify-content: center;
+            }
+        }
+
+        @media (max-width: 480px) {
+            body {
+                padding: 16px 12px;
+            }
+
+            .header, .documents-section {
+                padding: 20px;
+            }
+
+            .summary-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .analysis-details {
+                grid-template-columns: 1fr 1fr;
+            }
+        }
+
+        /* Print styles */
+        @media print {
+            body {
+                background: white !important;
+                color: black !important;
+            }
+
+            #particles-canvas {
+                display: none !important;
+            }
+
+            .header, .summary-card, .documents-section, .document-card, .detail-item {
+                background: white !important;
+                border-color: #e2e8f0 !important;
+                color: black !important;
+            }
+
+            .header-title, .card-value, .section-title, .document-name, .detail-value {
+                color: black !important;
+                -webkit-text-fill-color: black !important;
+            }
+
+            .card-label, .card-subtitle, .info-label, .info-value, .document-type, .detail-label {
+                color: #64748b !important;
+            }
+
+            .btn {
+                display: none !important;
+            }
+        }
+    </style>
+</head>
+<body>
+    <canvas id="particles-canvas"></canvas>
+    
+    <div class="container">
+        <div class="header">
+            <h1 class="header-title">
+                <svg viewBox="0 0 24 24"><path d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-6 9l2 2 4-4"/></svg>
+                Análise de Conformidade
+            </h1>
+            <div class="process-info" id="processInfo">
+                <!-- Será preenchido via JavaScript -->
+            </div>
+        </div>
+
+        <div class="summary-grid" id="summaryGrid">
+            <!-- Será preenchido via JavaScript -->
+        </div>
+
+        <div class="documents-section">
+            <h2 class="section-title">
+                <svg viewBox="0 0 24 24"><path d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/></svg>
+                Documentos Analisados
+            </h2>
+            <div id="documentsContainer">
+                <div class="loading">Carregando análise...</div>
+            </div>
+        </div>
+
+        <div class="actions">
+            <button class="btn btn-secondary" onclick="window.close()">
+                <svg viewBox="0 0 24 24"><path d="M10 19l-7-7m0 0l7-7m-7 7h18"/></svg>
+                Voltar
+            </button>
+            <button class="btn btn-primary" onclick="window.print()">
+                <svg viewBox="0 0 24 24"><path d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/></svg>
+                Baixar Relatório
+            </button>
+        </div>
+    </div>
+
+    <script>
+        // Animação de partículas
+        const canvas = document.getElementById('particles-canvas');
+        const ctx = canvas.getContext('2d');
+        
+        canvas.width = window.innerWidth;
+        canvas.height = window.innerHeight;
+        
+        window.addEventListener('resize', () => {
+            canvas.width = window.innerWidth;
+            canvas.height = window.innerHeight;
+        });
+        
+        const particles = [];
+        const particleCount = 60;
+        const connectionDistance = 120;
+        
+        class Particle {
+            constructor() {
+                this.x = Math.random() * canvas.width;
+                this.y = Math.random() * canvas.height;
+                this.vx = (Math.random() - 0.5) * 0.4;
+                this.vy = (Math.random() - 0.5) * 0.4;
+                this.radius = Math.random() * 2 + 1;
+            }
+            
+            update() {
+                this.x += this.vx;
+                this.y += this.vy;
+                
+                if (this.x < 0 || this.x > canvas.width) this.vx *= -1;
+                if (this.y < 0 || this.y > canvas.height) this.vy *= -1;
+            }
+            
+            draw() {
+                ctx.beginPath();
+                ctx.arc(this.x, this.y, this.radius, 0, Math.PI * 2);
+                ctx.fillStyle = 'rgba(59, 130, 246, 0.6)';
+                ctx.fill();
+            }
+        }
+        
+        for (let i = 0; i < particleCount; i++) {
+            particles.push(new Particle());
+        }
+        
+        function animate() {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            
+            particles.forEach(particle => {
+                particle.update();
+                particle.draw();
+            });
+            
+            for (let i = 0; i < particles.length; i++) {
+                for (let j = i + 1; j < particles.length; j++) {
+                    const dx = particles[i].x - particles[j].x;
+                    const dy = particles[i].y - particles[j].y;
+                    const distance = Math.sqrt(dx * dx + dy * dy);
+                    
+                    if (distance < connectionDistance) {
+                        const opacity = (1 - distance / connectionDistance) * 0.2;
+                        ctx.beginPath();
+                        ctx.strokeStyle = `rgba(59, 130, 246, ${opacity})`;
+                        ctx.lineWidth = 1;
+                        ctx.moveTo(particles[i].x, particles[i].y);
+                        ctx.lineTo(particles[j].x, particles[j].y);
+                        ctx.stroke();
+                    }
+                }
+            }
+            
+            requestAnimationFrame(animate);
+        }
+        
+        animate();
+        const processId = new URLSearchParams(window.location.search).get('process_id');
+
+        const typeLabels = {
+            'savings_management': 'Gestor',
+            'investments': 'Distribuidor',
+            'custody': 'Administrador'
+        };
+
+        async function loadReport() {
+            try {
+                const response = await fetch(`/api/process/${processId}/analysis-report`);
+                const data = await response.json();
+
+                if (!data.success) {
+                    throw new Error(data.error || 'Erro ao carregar relatório');
+                }
+
+                // Guardar data da análise para uso no template
+                window.analysisDate = data.analysis_date;
+
+                displayProcessInfo(data.process);
+                displaySummary(data.summary);
+                displayDocuments(data.documents);
+                
+                // Verificar se há documentos em análise e iniciar auto-reload
+                checkAndStartAutoReload(data.documents);
+            } catch (error) {
+                console.error('Erro:', error);
+                document.getElementById('documentsContainer').innerHTML = `
+                    <div class="empty-state">
+                        <p><svg style="width: 24px; height: 24px; stroke: #f87171; fill: none; stroke-width: 2; display: inline; vertical-align: middle; margin-right: 6px;" viewBox="0 0 24 24"><path d="M6 18L18 6M6 6l12 12"/></svg> Erro ao carregar análise</p>
+                        <p>${error.message}</p>
+                    </div>
+                `;
+            }
+        }
+
+        function displayProcessInfo(process) {
+            const container = document.getElementById('processInfo');
+            const categoryLabel = typeLabels[process.category] || process.category || 'N/A';
+            
+            container.innerHTML = `
+                <div class="info-item">
+                    <span class="info-label">Processo</span>
+                    <span class="info-value">${process.custom_id || '#' + process.id}</span>
+                </div>
+                <div class="info-item">
+                    <span class="info-label">Instituição</span>
+                    <span class="info-value">${process.institution_name || 'N/A'}</span>
+                </div>
+                <div class="info-item">
+                    <span class="info-label">Categoria</span>
+                    <span class="info-value">${categoryLabel}</span>
+                </div>
+                <div class="info-item">
+                    <span class="info-label">Data da Análise</span>
+                    <span class="info-value">${formatDate(window.analysisDate || new Date().toISOString())}</span>
+                </div>
+            `;
+        }
+
+        function displaySummary(summary) {
+            const container = document.getElementById('summaryGrid');
+            container.innerHTML = `
+                <div class="summary-card approved">
+                    <div class="card-label">Aprovados</div>
+                    <div class="card-value">${summary.approved}</div>
+                    <div class="card-subtitle">Documentos em conformidade</div>
+                </div>
+                <div class="summary-card rejected">
+                    <div class="card-label">Reprovados</div>
+                    <div class="card-value">${summary.rejected}</div>
+                    <div class="card-subtitle">Não conformes</div>
+                </div>
+                <div class="summary-card warning">
+                    <div class="card-label">Com Avisos</div>
+                    <div class="card-value">${summary.warnings}</div>
+                    <div class="card-subtitle">Requerem atenção</div>
+                </div>
+                <div class="summary-card score">
+                    <div class="card-label">Score Médio</div>
+                    <div class="card-value">${summary.average_score}%</div>
+                    <div class="card-subtitle">Conformidade geral</div>
+                </div>
+            `;
+        }
+
+        function displayDocuments(documents) {
+            const container = document.getElementById('documentsContainer');
+            
+            if (documents.length === 0) {
+                container.innerHTML = `
+                    <div class="empty-state">
+                        <p>Nenhum documento foi analisado ainda</p>
+                    </div>
+                `;
+                return;
+            }
+
+            container.innerHTML = documents.map(doc => `
+                <div class="document-card">
+                    <div class="document-header">
+                        <div>
+                            <div class="document-name">${doc.name}</div>
+                            <div class="document-type">${doc.type}</div>
+                        </div>
+                        <span class="status-badge ${getStatusClass(doc.status)}">
+                            ${getStatusLabel(doc.status)}
+                        </span>
+                    </div>
+
+                    ${doc.status === 'analyzing' ? `
+                        <div class="issue-item warning" style="margin-top: 16px;">
+                            <svg style="width: 16px; height: 16px; display: inline-block; vertical-align: middle; margin-right: 8px; stroke: currentColor; fill: none;" viewBox="0 0 24 24"><path d="M9.75 17L9 20l-1 1h8l-1-1-.75-3M3 13h18M5 17h14a2 2 0 002-2V5a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"/></svg>
+                            Este documento está sendo analisado pela IA. O resultado será atualizado automaticamente quando a análise for concluída.
+                        </div>
+                    ` : ''}
+
+                    ${doc.analysis && doc.analysis.score !== undefined ? `
+                        <div class="score-section">
+                            <div class="score-label">Score de Conformidade: ${doc.analysis.score}%</div>
+                            <div class="score-bar">
+                                <div class="score-fill ${getScoreClass(doc.analysis.score)}" 
+                                     style="width: ${doc.analysis.score}%"></div>
+                            </div>
+                        </div>
+
+                        ${doc.analysis.summary ? `
+                            <div class="issue-item ${doc.status === 'rejected' ? 'error' : 'success'}" style="margin-top: 12px;">
+                                ${doc.analysis.summary}
+                            </div>
+                        ` : ''}
+                    ` : ''}
+
+                    ${doc.analysis ? `
+                        <div class="analysis-details">
+                            ${doc.analysis.tipo_correto !== undefined ? `
+                                <div class="detail-item">
+                                    <div class="detail-label">Tipo Correto</div>
+                                    <div class="detail-value ${doc.analysis.tipo_correto ? 'success' : 'error'}">
+                                        ${doc.analysis.tipo_correto ? 'Sim' : 'Não'}
+                                    </div>
+                                </div>
+                            ` : ''}
+                            ${doc.analysis.instituicao_mencionada !== undefined ? `
+                                <div class="detail-item">
+                                    <div class="detail-label">Instituição Mencionada</div>
+                                    <div class="detail-value ${doc.analysis.instituicao_mencionada ? 'success' : 'error'}">
+                                        ${doc.analysis.instituicao_mencionada ? 'Sim' : 'Não'}
+                                    </div>
+                                </div>
+                            ` : ''}
+                            ${doc.analysis.completude !== undefined ? `
+                                <div class="detail-item">
+                                    <div class="detail-label">Completude</div>
+                                    <div class="detail-value">${doc.analysis.completude}%</div>
+                                </div>
+                            ` : ''}
+                            ${doc.analysis.coerencia !== undefined ? `
+                                <div class="detail-item">
+                                    <div class="detail-label">Coerência</div>
+                                    <div class="detail-value">${doc.analysis.coerencia}%</div>
+                                </div>
+                            ` : ''}
+                        </div>
+
+                        ${doc.analysis.completude_comentario || doc.analysis.coerencia_comentario || doc.analysis.instituicao_comentario ? `
+                            <div class="issues-section" style="margin-top: 16px;">
+                                <div class="issues-title">
+                                    <svg style="width: 16px; height: 16px; stroke: currentColor; fill: none;" viewBox="0 0 24 24"><path d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z"/></svg>
+                                    Análise da IA
+                                </div>
+                                ${doc.analysis.instituicao_comentario ? `
+                                    <div class="issue-item ${doc.analysis.instituicao_mencionada ? 'success' : 'warning'}">
+                                        <strong>Instituição:</strong> ${doc.analysis.instituicao_comentario}
+                                    </div>
+                                ` : ''}
+                                ${doc.analysis.completude_comentario ? `
+                                    <div class="issue-item ${doc.analysis.completude >= 70 ? 'success' : 'warning'}">
+                                        <strong>Completude:</strong> ${doc.analysis.completude_comentario}
+                                    </div>
+                                ` : ''}
+                                ${doc.analysis.coerencia_comentario ? `
+                                    <div class="issue-item ${doc.analysis.coerencia >= 70 ? 'success' : 'warning'}">
+                                        <strong>Coerência:</strong> ${doc.analysis.coerencia_comentario}
+                                    </div>
+                                ` : ''}
+                            </div>
+                        ` : ''}
+
+                        ${doc.analysis.tcees_validation ? `
+                            <div class="validation-box ${doc.analysis.tcees_validation.resultado_final === 'VALIDADO' ? 'valid' : 'invalid'}">
+                                <div class="issues-title">
+                                    <svg style="width: 16px; height: 16px; stroke: currentColor; fill: none;" viewBox="0 0 24 24"><path d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"/></svg>
+                                    Validação Oficial de Assinatura Digital
+                                </div>
+                                
+                                <div class="analysis-details" style="margin-top: 12px;">
+                                    <div class="detail-item" style="background: rgba(30, 41, 59, 0.8);">
+                                        <div class="detail-label">Resultado</div>
+                                        <div class="detail-value ${doc.analysis.tcees_validation.resultado_final === 'VALIDADO' ? 'success' : 'error'}">
+                                            ${doc.analysis.tcees_validation.resultado_final || 'N/A'}
+                                        </div>
+                                    </div>
+                                    ${doc.analysis.tcees_validation.pontuacao !== undefined ? `
+                                        <div class="detail-item" style="background: rgba(30, 41, 59, 0.8);">
+                                            <div class="detail-label">Pontuação</div>
+                                            <div class="detail-value">${doc.analysis.tcees_validation.pontuacao}/100</div>
+                                        </div>
+                                    ` : ''}
+                                    ${doc.analysis.tcees_validation.assinado !== undefined ? `
+                                        <div class="detail-item" style="background: rgba(30, 41, 59, 0.8);">
+                                            <div class="detail-label">Assinado</div>
+                                            <div class="detail-value ${doc.analysis.tcees_validation.assinado ? 'success' : 'error'}">
+                                                ${doc.analysis.tcees_validation.assinado ? 'Sim' : 'Não'}
+                                            </div>
+                                        </div>
+                                    ` : ''}
+                                    ${doc.analysis.tcees_validation.autenticidade_ok !== undefined ? `
+                                        <div class="detail-item" style="background: rgba(30, 41, 59, 0.8);">
+                                            <div class="detail-label">Autenticidade</div>
+                                            <div class="detail-value ${doc.analysis.tcees_validation.autenticidade_ok ? 'success' : 'error'}">
+                                                ${doc.analysis.tcees_validation.autenticidade_ok ? 'OK' : 'Falha'}
+                                            </div>
+                                        </div>
+                                    ` : ''}
+                                    ${doc.analysis.tcees_validation.integridade_ok !== undefined ? `
+                                        <div class="detail-item" style="background: rgba(30, 41, 59, 0.8);">
+                                            <div class="detail-label">Integridade</div>
+                                            <div class="detail-value ${doc.analysis.tcees_validation.integridade_ok ? 'success' : 'error'}">
+                                                ${doc.analysis.tcees_validation.integridade_ok ? 'OK' : 'Falha'}
+                                            </div>
+                                        </div>
+                                    ` : ''}
+                                    ${doc.analysis.tcees_validation.numero_assinaturas !== undefined ? `
+                                        <div class="detail-item" style="background: rgba(30, 41, 59, 0.8);">
+                                            <div class="detail-label">Nº Assinaturas</div>
+                                            <div class="detail-value">${doc.analysis.tcees_validation.numero_assinaturas}</div>
+                                        </div>
+                                    ` : ''}
+                                </div>
+
+                                ${doc.analysis.tcees_validation.titular_certificado || doc.analysis.tcees_validation.emissor_certificado ? `
+                                    <div style="margin-top: 12px; background: rgba(30, 41, 59, 0.6); padding: 14px; border-radius: 8px; border: 1px solid rgba(255, 255, 255, 0.1);">
+                                        ${doc.analysis.tcees_validation.titular_certificado ? `
+                                            <div style="margin-bottom: 10px;">
+                                                <strong style="color: rgba(255, 255, 255, 0.5); font-size: 0.7rem; text-transform: uppercase;">TITULAR DO CERTIFICADO:</strong><br>
+                                                <span style="color: #ffffff; font-size: 0.875rem; font-weight: 500;">${doc.analysis.tcees_validation.titular_certificado}</span>
+                                            </div>
+                                        ` : ''}
+                                        ${doc.analysis.tcees_validation.emissor_certificado ? `
+                                            <div>
+                                                <strong style="color: rgba(255, 255, 255, 0.5); font-size: 0.7rem; text-transform: uppercase;">EMISSOR:</strong><br>
+                                                <span style="color: #ffffff; font-size: 0.875rem; font-weight: 500;">${doc.analysis.tcees_validation.emissor_certificado}</span>
+                                            </div>
+                                        ` : ''}
+                                    </div>
+                                ` : ''}
+
+                                ${doc.analysis.tcees_validation.observacoes && doc.analysis.tcees_validation.observacoes.length > 0 ? `
+                                    <div style="margin-top: 12px;">
+                                        <strong style="color: rgba(255, 255, 255, 0.5); font-size: 0.7rem; text-transform: uppercase;">OBSERVAÇÕES:</strong>
+                                        ${doc.analysis.tcees_validation.observacoes.map(obs => `
+                                            <div class="issue-item success" style="margin-top: 6px; font-size: 0.813rem;">
+                                                ${obs}
+                                            </div>
+                                        `).join('')}
+                                    </div>
+                                ` : ''}
+
+                                ${doc.analysis.tcees_validation.alertas && doc.analysis.tcees_validation.alertas.length > 0 ? `
+                                    <div style="margin-top: 12px;">
+                                        <strong style="color: #fbbf24; font-size: 0.7rem; text-transform: uppercase; display: flex; align-items: center; gap: 6px;">
+                                            <svg style="width: 14px; height: 14px; stroke: currentColor; fill: none;" viewBox="0 0 24 24"><path d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"/></svg>
+                                            ALERTAS
+                                        </strong>
+                                        ${doc.analysis.tcees_validation.alertas.map(alerta => `
+                                            <div class="issue-item warning" style="margin-top: 6px; font-size: 0.813rem;">
+                                                ${alerta}
+                                            </div>
+                                        `).join('')}
+                                    </div>
+                                ` : ''}
+
+                                ${doc.analysis.tcees_validation.erros && doc.analysis.tcees_validation.erros.length > 0 ? `
+                                    <div style="margin-top: 12px;">
+                                        <strong style="color: #f87171; font-size: 0.7rem; text-transform: uppercase; display: flex; align-items: center; gap: 6px;">
+                                            <svg style="width: 14px; height: 14px; stroke: currentColor; fill: none;" viewBox="0 0 24 24"><path d="M10 14l2-2m0 0l2-2m-2 2l-2-2m2 2l2 2m7-2a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+                                            ERROS
+                                        </strong>
+                                        ${doc.analysis.tcees_validation.erros.map(erro => `
+                                            <div class="issue-item error" style="margin-top: 6px; font-size: 0.813rem;">
+                                                ${erro}
+                                            </div>
+                                        `).join('')}
+                                    </div>
+                                ` : ''}
+                            </div>
+                        ` : ''}
+                    ` : ''}
+
+                    ${doc.analysis && (doc.analysis.issues || doc.analysis.warnings) ? `
+                        <div class="issues-section">
+                            ${doc.analysis.issues && doc.analysis.issues.length > 0 ? `
+                                <div class="issues-title">
+                                    <svg style="width: 16px; height: 16px; stroke: currentColor; fill: none;" viewBox="0 0 24 24"><path d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"/></svg>
+                                    Problemas Encontrados
+                                </div>
+                                ${doc.analysis.issues.map(issue => `
+                                    <div class="issue-item error">${issue}</div>
+                                `).join('')}
+                            ` : ''}
+                            ${doc.analysis.warnings && doc.analysis.warnings.length > 0 ? `
+                                ${doc.analysis.issues && doc.analysis.issues.length > 0 ? '' : `<div class="issues-title"><svg style="width: 16px; height: 16px; stroke: currentColor; fill: none;" viewBox="0 0 24 24"><path d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg> Observações</div>`}
+                                ${doc.analysis.warnings.map(warning => `
+                                    <div class="issue-item ${warning.startsWith('✓') ? 'success' : 'warning'}">${warning.replace('✓', '<svg style="width: 14px; height: 14px; stroke: currentColor; fill: none; display: inline; vertical-align: middle; margin-right: 4px;" viewBox="0 0 24 24"><path d="M5 13l4 4L19 7"/></svg>')}</div>
+                                `).join('')}
+                            ` : ''}
+                        </div>
+                    ` : ''}
+                </div>
+            `).join('');
+        }
+
+        function getStatusClass(status) {
+            const classes = {
+                'approved': 'approved',
+                'rejected': 'rejected',
+                'analyzing': 'analyzing',
+                'pending': 'analyzing'
+            };
+            return classes[status] || 'analyzing';
+        }
+
+        function getStatusLabel(status) {
+            const labels = {
+                'approved': 'Aprovado',
+                'rejected': 'Reprovado',
+                'analyzing': 'Analisando',
+                'pending': 'Pendente'
+            };
+            return labels[status] || status;
+        }
+
+        function getScoreClass(score) {
+            if (score >= 70) return 'high';
+            if (score >= 50) return 'medium';
+            return 'low';
+        }
+
+        function formatDate(dateString) {
+            if (!dateString) return '-';
+            const date = new Date(dateString);
+            return date.toLocaleDateString('pt-BR', {
+                day: '2-digit',
+                month: '2-digit',
+                year: 'numeric',
+                hour: '2-digit',
+                minute: '2-digit'
+            });
+        }
+
+        // Carregar relatório ao abrir a página
+        loadReport();
+        
+        // Auto-reload a cada 3 segundos se houver documentos em análise
+        let autoReloadInterval = null;
+        
+        function checkAndStartAutoReload(documents) {
+            const hasAnalyzing = documents.some(doc => doc.status === 'analyzing');
+            
+            if (hasAnalyzing && !autoReloadInterval) {
+                console.log('📡 Documentos em análise detectados. Iniciando auto-reload...');
+                autoReloadInterval = setInterval(() => {
+                    console.log('🔄 Auto-reload: Verificando status...');
+                    loadReport();
+                }, 3000);
+            } else if (!hasAnalyzing && autoReloadInterval) {
+                console.log('✅ Todas análises concluídas. Parando auto-reload.');
+                clearInterval(autoReloadInterval);
+                autoReloadInterval = null;
+            }
+        }
+    </script>
+</body>
+</html>
