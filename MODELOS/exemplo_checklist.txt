@@ -1,0 +1,42 @@
+# EXEMPLO - Checklist de Documentos para Credenciamento
+
+## 📋 Documentos Obrigatórios
+
+Este é um arquivo de exemplo para demonstrar como os modelos de documentos funcionam no sistema.
+
+### Documentação Institucional
+- [ ] Apresentação Institucional completa
+- [ ] Termo de Credenciamento assinado
+- [ ] Declaração Unificada preenchida
+- [ ] CadPrev atualizado
+
+### Documentação Regulatória
+- [ ] Formulário de Referência CVM
+- [ ] QDD Anbima Seção I
+- [ ] Certidão de Autorização a Funcionar BACEN
+- [ ] Certidão Nada Consta do BACEN
+- [ ] Certidão de Adesão aos Códigos ANBIMA
+- [ ] Lista Exaustiva (Art. 15 Resolução CMN)
+
+### Certidões Tributárias
+- [ ] Certidão Municipal
+- [ ] Certidão Estadual
+- [ ] Certidão Federal
+- [ ] Certidão Trabalhista
+- [ ] Certidão FGTS
+
+### Documentos Contratuais
+- [ ] Contrato de Distribuição
+- [ ] Rating de Qualidade de Gestão
+- [ ] Situação ANCORD (AAI)
+
+## 📝 Observações
+
+- Todos os documentos devem estar assinados digitalmente quando aplicável
+- Certidões devem estar dentro do prazo de validade
+- Documentos devem ser legíveis e em formato PDF/A quando possível
+
+---
+
+**Este é um arquivo de EXEMPLO.** 
+Substitua por seus modelos oficiais na pasta Modelos/.
