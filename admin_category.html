@@ -1,0 +1,581 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{{ categoria_nome }} - Painel de Credenciamento</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --primary-800: #1e3a8a;
+            --primary-600: #2563eb;
+            --primary-500: #3b82f6;
+            --neutral-900: #0f172a;
+            --neutral-800: #1e293b;
+            --neutral-700: #334155;
+            --neutral-600: #475569;
+            --neutral-500: #64748b;
+            --neutral-400: #94a3b8;
+            --neutral-300: #cbd5e1;
+            --neutral-200: #e2e8f0;
+            --neutral-100: #f1f5f9;
+            --neutral-50: #f8fafc;
+            --success-600: #16a34a;
+            --success-100: #dcfce7;
+            --error-600: #dc2626;
+            --error-100: #fee2e2;
+            --warning-600: #ea580c;
+            --warning-100: #ffedd5;
+        }
+
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: #0f172a;
+            min-height: 100vh;
+            position: relative;
+            color: #ffffff;
+        }
+
+        body::before {
+            content: '';
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-image: 
+                radial-gradient(circle at 20% 50%, rgba(220, 38, 38, 0.08) 0%, transparent 50%),
+                radial-gradient(circle at 80% 80%, rgba(248, 113, 113, 0.06) 0%, transparent 50%);
+            pointer-events: none;
+            z-index: 0;
+        }
+
+        .navbar-modern {
+            background: linear-gradient(135deg, #0a1628 0%, #0c2340 100%);
+            border-bottom: 2px solid #1e3a5f;
+            padding: 0 48px;
+            height: 80px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+        }
+
+        .navbar-brand {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+        }
+
+        .brand-logo img {
+            height: 80px;
+            object-fit: contain;
+            margin-right: 16px;
+            filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.3));
+        }
+
+        .brand-title {
+            font-size: 1.25rem;
+            font-weight: 700;
+            color: white;
+            letter-spacing: -0.025em;
+        }
+
+        .brand-subtitle {
+            font-size: 0.75rem;
+            color: rgba(255, 255, 255, 0.85);
+            font-weight: 500;
+            letter-spacing: 0.5px;
+            text-transform: uppercase;
+        }
+
+        .navbar-actions {
+            display: flex;
+            align-items: center;
+            gap: 24px;
+        }
+
+        .btn {
+            padding: 12px 28px;
+            border: none;
+            border-radius: 10px;
+            font-weight: 600;
+            font-size: 0.9375rem;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+            text-decoration: none;
+        }
+
+        .btn-secondary {
+            background: rgba(30, 41, 59, 0.8);
+            color: #ffffff;
+            border: 1px solid rgba(255, 255, 255, 0.15);
+        }
+
+        .btn-secondary:hover {
+            background: rgba(30, 41, 59, 1);
+            border-color: rgba(255, 255, 255, 0.25);
+            transform: translateY(-1px);
+        }
+
+        .container-pro {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 40px;
+            position: relative;
+            z-index: 1;
+        }
+
+        .page-header {
+            margin-bottom: 40px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .heading-xl {
+            font-size: 36px;
+            font-weight: 700;
+            color: #ffffff;
+            letter-spacing: -1.5px;
+            margin-bottom: 8px;
+        }
+
+        .text-body {
+            font-size: 15px;
+            color: rgba(255, 255, 255, 0.7);
+            font-weight: 500;
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 24px;
+            margin-bottom: 40px;
+        }
+
+        .stat-card {
+            background: rgba(30, 41, 59, 0.8);
+            backdrop-filter: blur(20px);
+            border-radius: 16px;
+            padding: 28px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            display: flex;
+            align-items: center;
+            gap: 20px;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+        }
+
+        .stat-card:hover {
+            transform: translateY(-4px);
+            border-color: rgba(255, 255, 255, 0.2);
+        }
+
+        .stat-icon {
+            width: 56px;
+            height: 56px;
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 24px;
+            font-weight: 700;
+            color: white;
+        }
+
+        .stat-icon.primary {
+            background: linear-gradient(135deg, #dc2626 0%, #f87171 100%);
+        }
+
+        .stat-icon.success {
+            background: linear-gradient(135deg, #15803d 0%, var(--success-600) 100%);
+        }
+
+        .stat-icon.warning {
+            background: linear-gradient(135deg, #c2410c 0%, var(--warning-600) 100%);
+        }
+
+        .stat-icon.error {
+            background: linear-gradient(135deg, #b91c1c 0%, var(--error-600) 100%);
+        }
+
+        .stat-content {
+            flex: 1;
+        }
+
+        .stat-label {
+            font-size: 12px;
+            color: rgba(255, 255, 255, 0.6);
+            text-transform: uppercase;
+            letter-spacing: 0.8px;
+            font-weight: 600;
+            margin-bottom: 6px;
+        }
+
+        .stat-value {
+            font-size: 28px;
+            font-weight: 700;
+            color: #ffffff;
+        }
+
+        .tabs-pro {
+            display: flex;
+            gap: 8px;
+            margin-bottom: 24px;
+            background: rgba(30, 41, 59, 0.8);
+            padding: 8px;
+            border-radius: 12px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            box-shadow: 0 4px 16px rgba(0, 0, 0, 0.2);
+        }
+
+        .tab-pro {
+            padding: 12px 24px;
+            background: transparent;
+            color: rgba(255, 255, 255, 0.6);
+            border: none;
+            cursor: pointer;
+            font-weight: 600;
+            font-size: 14px;
+            transition: all 0.2s;
+            border-radius: 8px;
+        }
+
+        .tab-pro:hover {
+            color: #ffffff;
+            background: rgba(255, 255, 255, 0.1);
+        }
+
+        .tab-pro.active {
+            color: white;
+            background: linear-gradient(135deg, #dc2626 0%, #f87171 100%);
+            box-shadow: 0 4px 15px rgba(220, 38, 38, 0.4);
+        }
+
+        .card-pro {
+            background: rgba(30, 41, 59, 0.8);
+            backdrop-filter: blur(20px);
+            border-radius: 16px;
+            padding: 32px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            margin-bottom: 24px;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+        }
+
+        .search-bar {
+            margin-bottom: 24px;
+            position: relative;
+        }
+
+        .search-input {
+            width: 100%;
+            padding: 14px 20px 14px 48px;
+            border: 1px solid rgba(255, 255, 255, 0.15);
+            border-radius: 12px;
+            font-size: 15px;
+            transition: all 0.2s;
+            background: rgba(15, 23, 42, 0.6);
+            color: #ffffff;
+        }
+
+        .search-input::placeholder {
+            color: rgba(255, 255, 255, 0.5);
+        }
+
+        .search-input:focus {
+            outline: none;
+            border-color: #dc2626;
+            box-shadow: 0 0 0 3px rgba(220, 38, 38, 0.2);
+        }
+
+        .search-icon {
+            position: absolute;
+            left: 16px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: rgba(255, 255, 255, 0.5);
+            font-size: 20px;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        thead {
+            background: rgba(15, 23, 42, 0.6);
+        }
+
+        th {
+            padding: 14px 16px;
+            text-align: left;
+            font-size: 12px;
+            font-weight: 700;
+            color: rgba(255, 255, 255, 0.7);
+            text-transform: uppercase;
+            letter-spacing: 0.8px;
+            border-bottom: 2px solid rgba(255, 255, 255, 0.1);
+        }
+
+        td {
+            padding: 16px;
+            color: rgba(255, 255, 255, 0.8);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+            font-size: 14px;
+        }
+
+        tr:hover {
+            background: rgba(255, 255, 255, 0.05);
+        }
+
+        .badge {
+            padding: 6px 14px;
+            border-radius: 6px;
+            font-size: 11px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.8px;
+            display: inline-block;
+        }
+
+        .badge-success { background: rgba(34, 197, 94, 0.2); color: #4ade80; border: 1px solid rgba(34, 197, 94, 0.3); }
+        .badge-error { background: rgba(239, 68, 68, 0.2); color: #f87171; border: 1px solid rgba(239, 68, 68, 0.3); }
+        .badge-warning { background: rgba(251, 191, 36, 0.2); color: #fbbf24; border: 1px solid rgba(251, 191, 36, 0.3); }
+        .badge-info { background: rgba(59, 130, 246, 0.2); color: #60a5fa; border: 1px solid rgba(59, 130, 246, 0.3); }
+
+        .empty-state {
+            text-align: center;
+            padding: 60px 20px;
+            color: rgba(255, 255, 255, 0.5);
+        }
+
+        .empty-icon {
+            font-size: 64px;
+            margin-bottom: 16px;
+        }
+
+        .btn-view {
+            padding: 8px 16px;
+            background: linear-gradient(135deg, #dc2626 0%, #f87171 100%);
+            color: white;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            font-weight: 600;
+            font-size: 13px;
+            transition: all 0.2s;
+        }
+
+        .btn-view:hover {
+            transform: translateY(-1px);
+            box-shadow: 0 4px 15px rgba(220, 38, 38, 0.4);
+        }
+    </style>
+</head>
+<body>
+    <nav class="navbar-modern">
+        <div class="navbar-brand">
+            <img src="{{ url_for('static', filename='images/só o simbolo.png') }}?v=10" 
+                 alt="Logo" 
+                 style="height: 80px; object-fit: contain; margin-right: 16px; filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.3));"
+                 onerror="this.style.display='none'">
+            <div>
+                <div class="brand-title">Smart Credenciamento</div>
+                <div class="brand-subtitle">{{ categoria_nome }}</div>
+            </div>
+        </div>
+        
+        <div class="navbar-actions">
+            <a href="/admin/home" class="btn btn-secondary">← Voltar</a>
+        </div>
+    </nav>
+
+    <div class="container-pro">
+        <div class="page-header">
+            <div>
+                <h1 class="heading-xl">{{ categoria_nome }}</h1>
+                <p class="text-body">{{ categoria_descricao }}</p>
+            </div>
+        </div>
+
+        <!-- Estatísticas -->
+        <div class="stats-grid">
+            <div class="stat-card">
+                <div class="stat-icon primary">
+                    <svg style="width: 28px; height: 28px; stroke: #ffffff; fill: none; stroke-width: 2;" viewBox="0 0 24 24"><path d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"/></svg>
+                </div>
+                <div class="stat-content">
+                    <div class="stat-label">TOTAL DE PROCESSOS</div>
+                    <div class="stat-value" id="totalProcessos">{{ stats.total }}</div>
+                </div>
+            </div>
+            
+            <div class="stat-card">
+                <div class="stat-icon warning">
+                    <svg style="width: 28px; height: 28px; stroke: #ffffff; fill: none; stroke-width: 2;" viewBox="0 0 24 24"><path d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+                </div>
+                <div class="stat-content">
+                    <div class="stat-label">EM ANÁLISE</div>
+                    <div class="stat-value" id="emAnalise">{{ stats.em_analise }}</div>
+                </div>
+            </div>
+            
+            <div class="stat-card">
+                <div class="stat-icon success">
+                    <svg style="width: 28px; height: 28px; stroke: #ffffff; fill: none; stroke-width: 2.5;" viewBox="0 0 24 24"><path d="M5 13l4 4L19 7"/></svg>
+                </div>
+                <div class="stat-content">
+                    <div class="stat-label">APROVADOS</div>
+                    <div class="stat-value" id="aprovados">{{ stats.aprovados }}</div>
+                </div>
+            </div>
+            
+            <div class="stat-card">
+                <div class="stat-icon error">
+                    <svg style="width: 28px; height: 28px; stroke: #ffffff; fill: none; stroke-width: 2;" viewBox="0 0 24 24"><path d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"/></svg>
+                </div>
+                <div class="stat-content">
+                    <div class="stat-label">DEVOLVIDOS</div>
+                    <div class="stat-value" id="devolvidos">{{ stats.devolvidos }}</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Filtros -->
+        <div class="tabs-pro">
+            <button class="tab-pro" onclick="filterByStatus('todos')" id="tab-todos">Todos</button>
+            <button class="tab-pro" onclick="filterByStatus('enviado')" id="tab-enviado">Enviados</button>
+            <button class="tab-pro" onclick="filterByStatus('em_analise')" id="tab-em_analise">Em Análise</button>
+            <button class="tab-pro" onclick="filterByStatus('devolvido')" id="tab-devolvido">Devolvidos</button>
+            <button class="tab-pro" onclick="filterByStatus('aprovado')" id="tab-aprovado">Aprovados</button>
+        </div>
+
+        <!-- Busca -->
+        <div class="search-bar">
+            <span class="search-icon">
+                <svg style="width: 20px; height: 20px; stroke: currentColor; fill: none; stroke-width: 2;" viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"/><path d="M21 21l-4.35-4.35"/></svg>
+            </span>
+            <input type="text" class="search-input" id="searchInput" placeholder="Buscar Processo..." onkeyup="searchProcesses()">
+        </div>
+
+        <!-- Tabela de Processos -->
+        <div class="card-pro">
+            <table>
+                <thead>
+                    <tr>
+                        <th>ID</th>
+                        <th>INSTITUIÇÃO FINANCEIRA</th>
+                        <th>CATEGORIA</th>
+                        <th>STATUS</th>
+                        <th>DOCUMENTOS</th>
+                        <th>DATA DE ENVIO</th>
+                        <th>AÇÕES</th>
+                    </tr>
+                </thead>
+                <tbody id="processosTable">
+                    {% if processos %}
+                        {% for processo in processos %}
+                        <tr data-status="{{ processo.status }}">
+                            <td><strong>{{ processo.custom_id }}</strong></td>
+                            <td>{{ processo.institution_name }}</td>
+                            <td>
+                                <span class="badge 
+                                    {% if processo.credentialing_type == 'Gestor' %}badge-warning
+                                    {% elif processo.credentialing_type == 'Distribuidor' %}badge-info
+                                    {% else %}badge-success{% endif %}">
+                                    {{ processo.credentialing_type }}
+                                </span>
+                            </td>
+                            <td>
+                                <span class="badge 
+                                    {% if processo.status == 'aprovado' %}badge-success
+                                    {% elif processo.status == 'devolvido' %}badge-error
+                                    {% elif processo.status == 'em_analise' %}badge-warning
+                                    {% else %}badge-info{% endif %}">
+                                    {% if processo.status == 'enviado' %}Enviado
+                                    {% elif processo.status == 'em_analise' %}Em Análise
+                                    {% elif processo.status == 'devolvido' %}Devolvido
+                                    {% elif processo.status == 'aprovado' %}Aprovado
+                                    {% else %}{{ processo.status }}{% endif %}
+                                </span>
+                            </td>
+                            <td>{{ processo.document_count }}</td>
+                            <td>{{ processo.created_at }}</td>
+                            <td>
+                                <button class="btn-view" onclick="window.location.href='/admin/process/{{ processo.id }}'">Ver Detalhes</button>
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    {% else %}
+                        <tr>
+                            <td colspan="7" class="empty-state">
+                                <div class="empty-icon">
+                                    <svg style="width: 64px; height: 64px; stroke: rgba(255, 255, 255, 0.4); fill: none; stroke-width: 1.5;" viewBox="0 0 24 24"><path d="M3 7v10a2 2 0 002 2h14a2 2 0 002-2V9a2 2 0 00-2-2h-6l-2-2H5a2 2 0 00-2 2z"/></svg>
+                                </div>
+                                <h3 style="color: #ffffff; margin-bottom: 8px;">Nenhum Processo Encontrado</h3>
+                                <p>Não há processos nesta categoria no momento.</p>
+                            </td>
+                        </tr>
+                    {% endif %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <script>
+        let allProcesses = {{ processos | tojson }};
+        let currentFilter = 'todos';
+
+        function filterByStatus(status) {
+            currentFilter = status;
+            
+            // Atualizar abas ativas
+            document.querySelectorAll('.tab-pro').forEach(tab => tab.classList.remove('active'));
+            document.getElementById('tab-' + status).classList.add('active');
+            
+            // Filtrar processos
+            const rows = document.querySelectorAll('#processosTable tr[data-status]');
+            rows.forEach(row => {
+                if (status === 'todos' || row.getAttribute('data-status') === status) {
+                    row.style.display = '';
+                } else {
+                    row.style.display = 'none';
+                }
+            });
+        }
+
+        function searchProcesses() {
+            const searchTerm = document.getElementById('searchInput').value.toLowerCase();
+            const rows = document.querySelectorAll('#processosTable tr[data-status]');
+            
+            rows.forEach(row => {
+                const text = row.textContent.toLowerCase();
+                const matchesSearch = text.includes(searchTerm);
+                const matchesFilter = currentFilter === 'todos' || row.getAttribute('data-status') === currentFilter;
+                
+                if (matchesSearch && matchesFilter) {
+                    row.style.display = '';
+                } else {
+                    row.style.display = 'none';
+                }
+            });
+        }
+
+        // Ativar filtro "Todos" por padrão
+        document.getElementById('tab-todos').classList.add('active');
+    </script>
+</body>
+</html>

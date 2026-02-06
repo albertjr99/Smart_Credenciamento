@@ -1,0 +1,1012 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Análise do Processo - RPPS</title>
+    <style>
+        :root {
+            --primary-800: #1e3a8a;
+            --primary-500: #3b82f6;
+            --neutral-900: #0f172a;
+            --neutral-800: #1e293b;
+            --neutral-700: #334155;
+            --neutral-500: #64748b;
+            --neutral-400: #94a3b8;
+            --neutral-200: #e2e8f0;
+            --neutral-100: #f1f5f9;
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: #0f172a;
+            min-height: 100vh;
+            position: relative;
+            overflow-x: hidden;
+            color: #e2e8f0;
+        }
+
+        /* ANIMAÇÃO TECH DE PARTÍCULAS */
+        #particles-canvas {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 0;
+        }
+
+        .navbar-modern, .container {
+            position: relative;
+            z-index: 1;
+        }
+
+        .navbar-modern {
+            background: linear-gradient(135deg, #0a1628 0%, #0c2340 100%);
+            border-bottom: none;
+            padding: 0 48px;
+            height: 64px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+        }
+
+        .navbar-modern::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            height: 1px;
+            background: linear-gradient(90deg, transparent, rgba(59, 130, 246, 0.5), transparent);
+        }
+
+        .navbar-brand {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+        }
+
+        .brand-logo img {
+            height: 80px;
+            object-fit: contain;
+            margin-right: 16px;
+            filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.3));
+        }
+
+        .brand-title {
+            font-size: 1.25rem;
+            font-weight: 700;
+            color: white;
+            letter-spacing: -0.025em;
+        }
+
+        .brand-subtitle {
+            font-size: 0.75rem;
+            color: rgba(255, 255, 255, 0.85);
+            font-weight: 500;
+            letter-spacing: 0.5px;
+            text-transform: uppercase;
+        }
+
+        .btn-back {
+            padding: 12px 24px;
+            background: rgba(255, 255, 255, 0.1);
+            color: white;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            border-radius: 12px;
+            cursor: pointer;
+            font-weight: 600;
+            font-size: 0.9rem;
+            transition: all 0.3s ease;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .btn-back:hover {
+            background: rgba(255, 255, 255, 0.15);
+            transform: translateX(-4px);
+        }
+
+        .container {
+            max-width: 1000px;
+            margin: 40px auto;
+            padding: 0 24px;
+            position: relative;
+            z-index: 1;
+        }
+
+        /* ========================================
+           CARD PREMIUM - DARK THEME
+           ======================================== */
+        .card {
+            background: linear-gradient(135deg, rgba(30, 41, 59, 0.8) 0%, rgba(15, 23, 42, 0.9) 100%);
+            backdrop-filter: blur(20px);
+            border-radius: 20px;
+            padding: 28px;
+            margin-bottom: 20px;
+            border: 1px solid rgba(148, 163, 184, 0.15);
+            position: relative;
+            overflow: hidden;
+            /* Efeito 3D */
+            box-shadow: 
+                0 4px 6px rgba(0, 0, 0, 0.3),
+                0 10px 20px rgba(0, 0, 0, 0.25),
+                0 1px 0 rgba(255, 255, 255, 0.05) inset,
+                0 -2px 10px rgba(0, 0, 0, 0.2) inset;
+            transform: perspective(1000px) rotateX(1deg);
+            transform-style: preserve-3d;
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        .card:hover {
+            transform: perspective(1000px) rotateX(0deg) translateY(-6px);
+            box-shadow: 
+                0 15px 35px rgba(0, 0, 0, 0.4),
+                0 25px 50px rgba(0, 0, 0, 0.3),
+                0 0 50px rgba(59, 130, 246, 0.1),
+                0 1px 0 rgba(255, 255, 255, 0.1) inset;
+        }
+
+        .card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 1px;
+            background: linear-gradient(90deg, transparent, rgba(59, 130, 246, 0.5), transparent);
+        }
+
+        h1 {
+            font-size: 1.75rem;
+            color: #f1f5f9;
+            text-transform: uppercase;
+            margin-bottom: 24px;
+            background: linear-gradient(135deg, #60a5fa 0%, #a78bfa 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            display: inline-block;
+        }
+
+        .info-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 20px;
+            margin-bottom: 32px;
+            padding-bottom: 24px;
+            border-bottom: 1px solid rgba(148, 163, 184, 0.15);
+        }
+
+        .info-item {
+            padding: 16px;
+            background: rgba(15, 23, 42, 0.5);
+            border-radius: 12px;
+            border: 1px solid rgba(148, 163, 184, 0.1);
+        }
+
+        .info-item label {
+            display: block;
+            font-size: 0.7rem;
+            color: #94a3b8;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            margin-bottom: 8px;
+        }
+
+        .info-item .value {
+            font-size: 1rem;
+            color: #f1f5f9;
+            font-weight: 600;
+        }
+
+        h2 {
+            font-size: 1.25rem;
+            color: #f1f5f9;
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        /* ========================================
+           DOCUMENT LIST PREMIUM
+           ======================================== */
+        .document-list {
+            display: grid;
+            gap: 16px;
+            margin-bottom: 32px;
+        }
+
+        .document-item {
+            padding: 24px;
+            background: rgba(15, 23, 42, 0.6);
+            border-radius: 16px;
+            border: 1px solid rgba(148, 163, 184, 0.1);
+            transition: all 0.3s ease;
+        }
+
+        .document-item:hover {
+            border-color: rgba(59, 130, 246, 0.3);
+        }
+
+        .document-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 16px;
+        }
+
+        .document-title {
+            font-size: 1rem;
+            font-weight: 600;
+            color: #f1f5f9;
+            margin-bottom: 6px;
+        }
+
+        .document-meta {
+            font-size: 0.8rem;
+            color: #94a3b8;
+        }
+
+        .status-badge {
+            padding: 6px 14px;
+            border-radius: 100px;
+            font-size: 0.7rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+        }
+
+        .doc-approved { 
+            background: rgba(16, 185, 129, 0.15); 
+            color: #34d399; 
+            border: 1px solid rgba(16, 185, 129, 0.3);
+        }
+        .doc-rejected { 
+            background: rgba(239, 68, 68, 0.15); 
+            color: #f87171; 
+            border: 1px solid rgba(239, 68, 68, 0.3);
+        }
+        .doc-pending { 
+            background: rgba(245, 158, 11, 0.15); 
+            color: #fbbf24; 
+            border: 1px solid rgba(245, 158, 11, 0.3);
+        }
+
+        .analysis-section {
+            margin-top: 16px;
+            padding-top: 16px;
+            border-top: 1px solid rgba(148, 163, 184, 0.1);
+        }
+
+        .analysis-section h4 {
+            font-size: 0.85rem;
+            color: #94a3b8;
+            margin-bottom: 12px;
+            font-weight: 600;
+        }
+
+        .analysis-item {
+            padding: 12px 16px;
+            background: rgba(30, 41, 59, 0.5);
+            border-radius: 10px;
+            margin-bottom: 8px;
+            font-size: 0.85rem;
+        }
+
+        .analysis-item.success {
+            border-left: 3px solid #10b981;
+            color: #34d399;
+        }
+
+        .analysis-item.error {
+            border-left: 3px solid #ef4444;
+            color: #f87171;
+        }
+
+        .analysis-item.info {
+            border-left: 3px solid #3b82f6;
+            color: #60a5fa;
+        }
+
+        /* ========================================
+           REVIEW SECTION PREMIUM
+           ======================================== */
+        .review-section {
+            background: linear-gradient(135deg, rgba(59, 130, 246, 0.1) 0%, rgba(15, 23, 42, 0.8) 100%);
+            padding: 28px;
+            border-radius: 16px;
+            border: 1px solid rgba(59, 130, 246, 0.2);
+        }
+
+        .review-section h3 {
+            font-size: 1.25rem;
+            color: #f1f5f9;
+            margin-bottom: 20px;
+        }
+
+        .form-group {
+            margin-bottom: 24px;
+        }
+
+        .form-group label {
+            display: block;
+            font-weight: 600;
+            margin-bottom: 10px;
+            color: #94a3b8;
+            font-size: 0.85rem;
+        }
+
+        .form-group textarea {
+            width: 100%;
+            min-height: 120px;
+            padding: 16px;
+            border: 1px solid rgba(148, 163, 184, 0.2);
+            border-radius: 12px;
+            font-size: 0.95rem;
+            font-family: inherit;
+            resize: vertical;
+            background: rgba(15, 23, 42, 0.5);
+            color: #f1f5f9;
+            transition: all 0.3s ease;
+        }
+
+        .form-group textarea::placeholder {
+            color: #64748b;
+        }
+
+        .form-group textarea:focus {
+            outline: none;
+            border-color: rgba(59, 130, 246, 0.5);
+            box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+        }
+
+        .review-actions {
+            display: flex;
+            gap: 16px;
+        }
+
+        .btn {
+            flex: 1;
+            padding: 16px 24px;
+            border: none;
+            border-radius: 12px;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+        }
+
+        .btn-approve {
+            background: linear-gradient(135deg, #10b981 0%, #34d399 100%);
+            color: white;
+            border: 1px solid rgba(16, 185, 129, 0.3);
+        }
+
+        .btn-reject {
+            background: linear-gradient(135deg, #dc2626 0%, #f87171 100%);
+            color: white;
+            border: 1px solid rgba(220, 38, 38, 0.3);
+        }
+
+        .btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 12px 24px rgba(0, 0, 0, 0.3);
+        }
+
+        .btn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        /* ========================================
+           FINAL DECISION PREMIUM
+           ======================================== */
+        .final-decision {
+            padding: 28px;
+            border-radius: 16px;
+            margin-bottom: 24px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .final-decision::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 1px;
+        }
+
+        .final-decision.approved {
+            background: rgba(16, 185, 129, 0.1);
+            border: 1px solid rgba(16, 185, 129, 0.3);
+        }
+
+        .final-decision.approved::before {
+            background: linear-gradient(90deg, transparent, rgba(16, 185, 129, 0.5), transparent);
+        }
+
+        .final-decision.rejected {
+            background: rgba(239, 68, 68, 0.1);
+            border: 1px solid rgba(239, 68, 68, 0.3);
+        }
+
+        .final-decision.rejected::before {
+            background: linear-gradient(90deg, transparent, rgba(239, 68, 68, 0.5), transparent);
+        }
+
+        .final-decision h3 {
+            font-size: 1.25rem;
+            margin-bottom: 12px;
+            color: #f1f5f9;
+        }
+
+        .final-decision p {
+            font-size: 0.95rem;
+            line-height: 1.6;
+            color: #94a3b8;
+        }
+
+        .alert {
+            padding: 16px 20px;
+            border-radius: 12px;
+            margin-bottom: 20px;
+        }
+
+        .alert-info { 
+            background: rgba(59, 130, 246, 0.1); 
+            color: #60a5fa; 
+            border: 1px solid rgba(59, 130, 246, 0.2);
+        }
+        .alert-success { 
+            background: rgba(16, 185, 129, 0.1); 
+            color: #34d399; 
+            border: 1px solid rgba(16, 185, 129, 0.2);
+        }
+        .alert-error { 
+            background: rgba(239, 68, 68, 0.1); 
+            color: #f87171; 
+            border: 1px solid rgba(239, 68, 68, 0.2);
+        }
+
+        /* ========================================
+           RESPONSIVIDADE
+           ======================================== */
+        @media (max-width: 768px) {
+            .navbar-modern {
+                padding: 0 20px;
+                height: 64px;
+            }
+            
+            .brand-logo img {
+                height: 48px;
+            }
+            
+            .container {
+                padding: 0 16px;
+                margin: 24px auto;
+            }
+            
+            .card {
+                padding: 24px;
+            }
+            
+            h1 {
+                font-size: 1.25rem;
+            }
+            
+            .info-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .review-actions {
+                flex-direction: column;
+            }
+        }
+
+        /* BOTÃO FULLSCREEN */
+        .fullscreen-btn {
+            position: fixed;
+            bottom: 24px;
+            right: 24px;
+            width: 56px;
+            height: 56px;
+            border-radius: 16px;
+            background: linear-gradient(135deg, rgba(30, 41, 59, 0.95) 0%, rgba(15, 23, 42, 0.98) 100%);
+            border: 1px solid rgba(59, 130, 246, 0.3);
+            cursor: pointer;
+            z-index: 9999;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #60a5fa;
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.4), 0 8px 32px rgba(59, 130, 246, 0.15), 0 1px 0 rgba(255, 255, 255, 0.1) inset;
+            backdrop-filter: blur(20px);
+            transform: perspective(500px) rotateX(5deg);
+        }
+        .fullscreen-btn::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 1px;
+            background: linear-gradient(90deg, transparent, rgba(59, 130, 246, 0.5), transparent);
+            border-radius: 16px 16px 0 0;
+        }
+        .fullscreen-btn:hover {
+            transform: perspective(500px) rotateX(0deg) translateY(-4px) scale(1.05);
+            border-color: rgba(59, 130, 246, 0.6);
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.5), 0 16px 48px rgba(59, 130, 246, 0.25), 0 0 60px rgba(59, 130, 246, 0.2);
+            color: #93c5fd;
+        }
+        .fullscreen-btn svg { width: 24px; height: 24px; transition: all 0.3s ease; }
+        .fullscreen-btn.is-fullscreen { background: linear-gradient(135deg, rgba(59, 130, 246, 0.3) 0%, rgba(15, 23, 42, 0.98) 100%); border-color: rgba(59, 130, 246, 0.5); }
+        .fullscreen-btn .icon-expand, .fullscreen-btn.is-fullscreen .icon-compress { display: block; }
+        .fullscreen-btn .icon-compress, .fullscreen-btn.is-fullscreen .icon-expand { display: none; }
+        .fullscreen-btn-tooltip {
+            position: absolute;
+            right: 68px;
+            top: 50%;
+            transform: translateY(-50%);
+            background: rgba(15, 23, 42, 0.95);
+            color: #e2e8f0;
+            padding: 8px 14px;
+            border-radius: 10px;
+            font-size: 0.8rem;
+            font-weight: 500;
+            white-space: nowrap;
+            opacity: 0;
+            visibility: hidden;
+            transition: all 0.3s ease;
+            border: 1px solid rgba(59, 130, 246, 0.2);
+        }
+        .fullscreen-btn-tooltip::after {
+            content: '';
+            position: absolute;
+            right: -6px;
+            top: 50%;
+            transform: translateY(-50%);
+            border: 6px solid transparent;
+            border-left-color: rgba(15, 23, 42, 0.95);
+        }
+        .fullscreen-btn:hover .fullscreen-btn-tooltip { opacity: 1; visibility: visible; }
+    </style>
+</head>
+<body>
+    <!-- Canvas para Animação Tech de Partículas -->
+    <canvas id="particles-canvas"></canvas>
+
+    <nav class="navbar-modern">
+        <div class="navbar-brand">
+            <img src="{{ url_for('static', filename='images/só o simbolo.png') }}?v=10" 
+                 alt="Logo" 
+                 style="height: 80px; object-fit: contain; margin-right: 16px; filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.3));"
+                 onerror="this.style.display='none'">
+            <div>
+                <div class="brand-title">Smart Credenciamento</div>
+                <div class="brand-subtitle">Regime Próprio de Previdência Social</div>
+            </div>
+        </div>
+        <button class="btn-back" onclick="window.location.href='/rpps/home'">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <line x1="19" y1="12" x2="5" y2="12"></line>
+                <polyline points="12 19 5 12 12 5"></polyline>
+            </svg>
+            Voltar
+        </button>
+    </nav>
+
+    <div class="container">
+        <div class="card">
+            <h1 id="processType">Carregando...</h1>
+
+            <div class="info-grid">
+                <div class="info-item">
+                    <label>Instituição Financeira</label>
+                    <div class="value" id="institutionName">-</div>
+                </div>
+                <div class="info-item">
+                    <label>Data de Criação</label>
+                    <div class="value" id="createdAt">-</div>
+                </div>
+                <div class="info-item">
+                    <label>Data de Envio</label>
+                    <div class="value" id="submittedAt">-</div>
+                </div>
+                <div class="info-item">
+                    <label>Total de Documentos</label>
+                    <div class="value" id="docCount">-</div>
+                </div>
+            </div>
+
+            <div id="finalDecision" style="display: none;"></div>
+
+            <h2>Documentos Enviados</h2>
+            <div class="document-list" id="documentList">
+                <p style="color: var(--neutral-500);">Carregando documentos...</p>
+            </div>
+
+            <div id="reviewSection" style="display: none;">
+                <div class="review-section">
+                    <h3>Parecer Final</h3>
+                    
+                    <div class="form-group">
+                        <label>Observações e Recomendações:</label>
+                        <textarea id="reviewNote" placeholder="Insira suas observações sobre o processo de credenciamento..."></textarea>
+                    </div>
+
+                    <div class="review-actions">
+                        <button class="btn btn-approve" onclick="reviewProcess('approved')">
+                            Aprovar Credenciamento
+                        </button>
+                        <button class="btn btn-reject" onclick="reviewProcess('rejected')">
+                            Rejeitar Credenciamento
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const processId = {{ process_id }};
+        let currentProcess = null;
+
+        async function loadProcess() {
+            try {
+                const response = await fetch(`/api/financial/process/${processId}`);
+                currentProcess = await response.json();
+                
+                displayProcess(currentProcess);
+            } catch (error) {
+                console.error('Erro ao carregar processo:', error);
+            }
+        }
+
+        function displayProcess(process) {
+            document.getElementById('processType').textContent = process.credentialing_type.toUpperCase();
+            document.getElementById('institutionName').textContent = process.financial_institution_name;
+            document.getElementById('createdAt').textContent = new Date(process.created_at).toLocaleDateString('pt-BR');
+            document.getElementById('submittedAt').textContent = process.submitted_at 
+                ? new Date(process.submitted_at).toLocaleDateString('pt-BR') 
+                : 'Não enviado';
+            document.getElementById('docCount').textContent = process.documents.length;
+
+            // Mostrar/ocultar seção de revisão
+            if (process.status === 'submitted' || process.status === 'under_review') {
+                document.getElementById('reviewSection').style.display = 'block';
+            }
+
+            // Decisão final
+            if (process.final_decision) {
+                const finalDiv = document.getElementById('finalDecision');
+                finalDiv.style.display = 'block';
+                finalDiv.className = `final-decision ${process.final_decision}`;
+                
+                const title = process.final_decision === 'approved' ? 'Credenciamento Aprovado' : 'Credenciamento Rejeitado';
+                
+                finalDiv.innerHTML = `
+                    <h3>${title}</h3>
+                    <p><strong>Parecer:</strong> ${process.final_review_note || 'Sem observações'}</p>
+                `;
+            }
+
+            // Documentos
+            displayDocuments(process.documents);
+        }
+
+        function displayDocuments(documents) {
+            const list = document.getElementById('documentList');
+            
+            if (documents.length === 0) {
+                list.innerHTML = '<p style="color: var(--neutral-500);">Nenhum documento enviado</p>';
+                return;
+            }
+
+            list.innerHTML = '';
+            documents.forEach(doc => {
+                const item = document.createElement('div');
+                item.className = 'document-item';
+                
+                const statusText = {
+                    'approved': 'Aprovado',
+                    'rejected': 'Rejeitado',
+                    'pending': 'Pendente'
+                };
+
+                let analysisHTML = '';
+                if (doc.analysis) {
+                    const analysis = doc.analysis;
+                    
+                    analysisHTML = '<div class="analysis-section">';
+                    
+                    // Análise de conteúdo
+                    if (analysis.content_analysis) {
+                        const ca = analysis.content_analysis;
+                        analysisHTML += '<h4>Análise de Conteúdo:</h4>';
+                        
+                        if (ca.summary) {
+                            analysisHTML += `<div class="analysis-item info">${ca.summary}</div>`;
+                        }
+                        
+                        if (ca.issues && ca.issues.length > 0) {
+                            ca.issues.forEach(issue => {
+                                analysisHTML += `<div class="analysis-item error"><svg style="width: 16px; height: 16px; stroke: #f87171; fill: none; stroke-width: 2; display: inline; vertical-align: middle; margin-right: 6px;" viewBox="0 0 24 24"><path d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"/></svg> ${issue}</div>`;
+                            });
+                        }
+                        
+                        if (ca.recommendations && ca.recommendations.length > 0) {
+                            ca.recommendations.forEach(rec => {
+                                analysisHTML += `<div class="analysis-item info"><svg style="width: 16px; height: 16px; stroke: #60a5fa; fill: none; stroke-width: 2; display: inline; vertical-align: middle; margin-right: 6px;" viewBox="0 0 24 24"><path d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z"/></svg> ${rec}</div>`;
+                            });
+                        }
+                    }
+                    
+                    // Validação de assinatura - Checks do TCE-ES
+                    if (analysis.signature_validation) {
+                        const sv = analysis.signature_validation;
+                        analysisHTML += '<h4>Análise de Conformidade (TCE-ES):</h4>';
+                        
+                        // Criar tabela de checks estilo TCE-ES
+                        analysisHTML += '<div style="background: rgba(30, 41, 59, 0.6); padding: 12px; border-radius: 8px; margin-bottom: 12px; border: 1px solid rgba(255, 255, 255, 0.1);">';
+                        analysisHTML += '<table style="width: 100%; font-size: 13px; border-collapse: collapse;">';
+                        
+                        // Cabeçalho
+                        analysisHTML += '<thead><tr style="background: var(--neutral-100); font-weight: 600;">';
+                        analysisHTML += '<th style="padding: 8px; text-align: left;">Verificação</th>';
+                        analysisHTML += '<th style="padding: 8px; text-align: center; width: 80px;">Status</th>';
+                        analysisHTML += '</tr></thead><tbody>';
+                        
+                        // Checks individuais
+                        const checks = [
+                            { label: 'Extensão', value: sv.extensao_valida, key: 'extensao_valida' },
+                            { label: 'Sem senha', value: sv.sem_senha, key: 'sem_senha' },
+                            { label: 'Tamanho do arquivo', value: sv.tamanho_arquivo_ok, key: 'tamanho_arquivo_ok' },
+                            { label: 'Tamanho por página', value: sv.tamanho_pagina_ok, key: 'tamanho_pagina_ok' },
+                            { label: 'Assinado', value: sv.assinado, key: 'assinado' },
+                            { label: 'Autenticidade', value: sv.autenticidade, key: 'autenticidade' },
+                            { label: 'Integridade', value: sv.integridade, key: 'integridade' },
+                            { label: 'Pesquisável', value: sv.pesquisavel, key: 'pesquisavel' }
+                        ];
+                        
+                        checks.forEach(check => {
+                            const icon = check.value ? '<svg style="width: 22px; height: 22px; stroke: #4ade80; fill: none; stroke-width: 2.5;" viewBox="0 0 24 24"><path d="M5 13l4 4L19 7"/></svg>' : '<svg style="width: 22px; height: 22px; stroke: #f87171; fill: none; stroke-width: 2.5;" viewBox="0 0 24 24"><path d="M6 18L18 6M6 6l12 12"/></svg>';
+                            const color = check.value ? '#10b981' : '#ef4444';
+                            analysisHTML += `<tr style="border-bottom: 1px solid var(--neutral-200);">`;
+                            analysisHTML += `<td style="padding: 8px;">${check.label}</td>`;
+                            analysisHTML += `<td style="padding: 8px; text-align: center; color: ${color}; font-size: 18px;">${icon}</td>`;
+                            analysisHTML += `</tr>`;
+                        });
+                        
+                        analysisHTML += '</tbody></table>';
+                        analysisHTML += '</div>';
+                        
+                        // Informações adicionais
+                        if (sv.numero_assinaturas > 0) {
+                            analysisHTML += `<div class="analysis-item info">${sv.numero_assinaturas} assinatura(s) digital(is) detectada(s)</div>`;
+                        }
+                        
+                        if (sv.file_size_mb) {
+                            analysisHTML += `<div class="analysis-item info">Tamanho: ${sv.file_size_mb}</div>`;
+                        }
+                        
+                        if (sv.page_count) {
+                            analysisHTML += `<div class="analysis-item info">Páginas: ${sv.page_count}</div>`;
+                        }
+                        
+                        // Resultado final da conformidade
+                        const resultIcon = sv.resultado_final_conformidade === 'approved' ? '<svg style="width: 20px; height: 20px; stroke: #4ade80; fill: none; stroke-width: 2.5; display: inline; vertical-align: middle;" viewBox="0 0 24 24"><path d="M5 13l4 4L19 7"/></svg>' : '<svg style="width: 20px; height: 20px; stroke: #f87171; fill: none; stroke-width: 2.5; display: inline; vertical-align: middle;" viewBox="0 0 24 24"><path d="M6 18L18 6M6 6l12 12"/></svg>';
+                        const resultClass = sv.resultado_final_conformidade === 'approved' ? 'success' : 'error';
+                        const resultText = sv.resultado_final_conformidade === 'approved' 
+                            ? 'CONFORME - Documento aprovado em todas as verificações' 
+                            : 'NÃO CONFORME - Documento reprovado em uma ou mais verificações';
+                        
+                        analysisHTML += `<div class="analysis-item ${resultClass}" style="font-weight: 600; margin-top: 8px;">
+                            ${resultIcon} ${resultText}
+                        </div>`;
+                    }
+                    
+                    // Veredito final
+                    if (analysis.final_verdict) {
+                        const verdict = analysis.final_verdict === 'approved' ? 'Aprovado' : 'Rejeitado';
+                        const verdictIcon = analysis.final_verdict === 'approved' ? '<svg style="width: 20px; height: 20px; stroke: #4ade80; fill: none; stroke-width: 2.5; display: inline; vertical-align: middle;" viewBox="0 0 24 24"><path d="M5 13l4 4L19 7"/></svg>' : '<svg style="width: 20px; height: 20px; stroke: #f87171; fill: none; stroke-width: 2.5; display: inline; vertical-align: middle;" viewBox="0 0 24 24"><path d="M6 18L18 6M6 6l12 12"/></svg>';
+                        const verdictClass = analysis.final_verdict === 'approved' ? 'success' : 'error';
+                        analysisHTML += `<div class="analysis-item ${verdictClass}" style="font-weight: 600; margin-top: 8px;">
+                            ${verdictIcon} Veredito: ${verdict}
+                        </div>`;
+                    }
+                    
+                    analysisHTML += '</div>';
+                }
+
+                item.innerHTML = `
+                    <div class="document-header">
+                        <div>
+                            <div class="document-title">${doc.name}</div>
+                            <div class="document-meta">
+                                Tipo: ${doc.type} • Enviado em ${new Date(doc.uploaded_at).toLocaleDateString('pt-BR')}
+                            </div>
+                        </div>
+                        <span class="status-badge doc-${doc.status}">
+                            ${statusText[doc.status]}
+                        </span>
+                    </div>
+                    ${analysisHTML}
+                `;
+                
+                list.appendChild(item);
+            });
+        }
+
+        async function reviewProcess(decision) {
+            const note = document.getElementById('reviewNote').value;
+            
+            const confirmMsg = decision === 'approved' 
+                ? 'Deseja APROVAR este credenciamento?' 
+                : 'Deseja REJEITAR este credenciamento?';
+            
+            if (!confirm(confirmMsg)) return;
+            
+            try {
+                const response = await fetch(`/api/rpps/review-process/${processId}`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({ decision, note })
+                });
+                
+                const data = await response.json();
+                
+                if (data.success) {
+                    alert(`Credenciamento ${decision === 'approved' ? 'aprovado' : 'rejeitado'} com sucesso!`);
+                    await loadProcess();
+                } else {
+                    alert('Erro ao revisar processo');
+                }
+            } catch (error) {
+                alert('Erro ao conectar com o servidor');
+            }
+        }
+
+        loadProcess();
+    </script>
+
+    <!-- Script da Animação Tech de Partículas - Versão Equilibrada -->
+    <script>
+        (function() {
+            const canvas = document.getElementById('particles-canvas');
+            const ctx = canvas.getContext('2d');
+            let particles = [];
+            const particleCount = 60;
+            const connectionDistance = 150;
+            const mouseRadius = 150;
+            let mouse = { x: null, y: null };
+            let time = 0;
+            
+            function resizeCanvas() {
+                canvas.width = window.innerWidth;
+                canvas.height = Math.max(document.documentElement.scrollHeight, window.innerHeight);
+            }
+            
+            class Particle {
+                constructor() {
+                    this.x = Math.random() * canvas.width;
+                    this.y = Math.random() * canvas.height;
+                    this.baseSize = Math.random() * 1.5 + 1;
+                    this.size = this.baseSize;
+                    this.speedX = (Math.random() - 0.5) * 0.4;
+                    this.speedY = (Math.random() - 0.5) * 0.4;
+                    this.pulseOffset = Math.random() * Math.PI * 2;
+                }
+                update() {
+                    this.x += this.speedX;
+                    this.y += this.speedY;
+                    this.size = this.baseSize + Math.sin(time * 0.015 + this.pulseOffset) * 0.3;
+                    if (this.x < 0 || this.x > canvas.width) this.speedX *= -1;
+                    if (this.y < 0 || this.y > canvas.height) this.speedY *= -1;
+                    if (mouse.x !== null) {
+                        const dx = mouse.x - this.x, dy = (mouse.y + window.scrollY) - this.y;
+                        const dist = Math.sqrt(dx * dx + dy * dy);
+                        if (dist < mouseRadius && dist > 30) {
+                            this.x += dx * ((mouseRadius - dist) / mouseRadius * 0.015);
+                            this.y += dy * ((mouseRadius - dist) / mouseRadius * 0.015);
+                        }
+                    }
+                }
+                draw() {
+                    const gradient = ctx.createRadialGradient(this.x, this.y, 0, this.x, this.y, this.size * 2.5);
+                    gradient.addColorStop(0, 'rgba(59, 130, 246, 0.4)');
+                    gradient.addColorStop(0.5, 'rgba(59, 130, 246, 0.15)');
+                    gradient.addColorStop(1, 'rgba(59, 130, 246, 0)');
+                    ctx.beginPath(); ctx.arc(this.x, this.y, this.size * 2.5, 0, Math.PI * 2); ctx.fillStyle = gradient; ctx.fill();
+                    ctx.beginPath(); ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2); ctx.fillStyle = 'rgba(59, 130, 246, 0.6)'; ctx.fill();
+                }
+            }
+            function initParticles() { particles = []; for (let i = 0; i < particleCount; i++) particles.push(new Particle()); }
+            function connectParticles() {
+                for (let i = 0; i < particles.length; i++) {
+                    for (let j = i + 1; j < particles.length; j++) {
+                        const dx = particles[i].x - particles[j].x, dy = particles[i].y - particles[j].y;
+                        const distance = Math.sqrt(dx * dx + dy * dy);
+                        if (distance < connectionDistance) {
+                            ctx.beginPath(); ctx.strokeStyle = `rgba(59, 130, 246, ${(1 - distance / connectionDistance) * 0.25})`;
+                            ctx.lineWidth = 1; ctx.moveTo(particles[i].x, particles[i].y); ctx.lineTo(particles[j].x, particles[j].y); ctx.stroke();
+                        }
+                    }
+                }
+                if (mouse.x !== null) {
+                    const mouseY = mouse.y + window.scrollY;
+                    particles.forEach(p => {
+                        const dx = p.x - mouse.x, dy = p.y - mouseY, distance = Math.sqrt(dx * dx + dy * dy);
+                        if (distance < mouseRadius) {
+                            ctx.beginPath(); ctx.strokeStyle = `rgba(96, 165, 250, ${(1 - distance / mouseRadius) * 0.3})`;
+                            ctx.lineWidth = 1; ctx.moveTo(p.x, p.y); ctx.lineTo(mouse.x, mouseY); ctx.stroke();
+                        }
+                    });
+                }
+            }
+            function animate() { ctx.clearRect(0, 0, canvas.width, canvas.height); time++; particles.forEach(p => { p.update(); p.draw(); }); connectParticles(); requestAnimationFrame(animate); }
+            window.addEventListener('resize', () => { resizeCanvas(); initParticles(); });
+            window.addEventListener('scroll', () => { resizeCanvas(); });
+            document.addEventListener('mousemove', (e) => { mouse.x = e.clientX; mouse.y = e.clientY; });
+            document.addEventListener('mouseleave', () => { mouse.x = null; mouse.y = null; });
+            resizeCanvas(); initParticles(); animate();
+        })();
+    </script>
+
+    <!-- Botão Fullscreen -->
+    <button class="fullscreen-btn" id="fullscreenBtn" onclick="toggleFullscreen()">
+        <span class="fullscreen-btn-tooltip" id="fullscreenTooltip">Tela Cheia</span>
+        <svg class="icon-expand" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M8 3H5a2 2 0 0 0-2 2v3"/><path d="M21 8V5a2 2 0 0 0-2-2h-3"/>
+            <path d="M3 16v3a2 2 0 0 0 2 2h3"/><path d="M16 21h3a2 2 0 0 0 2-2v-3"/>
+        </svg>
+        <svg class="icon-compress" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M4 14h6v6"/><path d="M20 10h-6V4"/><path d="M14 10l7-7"/><path d="M3 21l7-7"/>
+        </svg>
+    </button>
+    <script>
+        function toggleFullscreen() {
+            const btn = document.getElementById('fullscreenBtn'), tooltip = document.getElementById('fullscreenTooltip');
+            if (!document.fullscreenElement && !document.webkitFullscreenElement) {
+                const elem = document.documentElement;
+                if (elem.requestFullscreen) elem.requestFullscreen();
+                else if (elem.webkitRequestFullscreen) elem.webkitRequestFullscreen();
+                btn.classList.add('is-fullscreen'); tooltip.textContent = 'Sair da Tela Cheia';
+            } else {
+                if (document.exitFullscreen) document.exitFullscreen();
+                else if (document.webkitExitFullscreen) document.webkitExitFullscreen();
+                btn.classList.remove('is-fullscreen'); tooltip.textContent = 'Tela Cheia';
+            }
+        }
+        document.addEventListener('fullscreenchange', updateFS); document.addEventListener('webkitfullscreenchange', updateFS);
+        function updateFS() {
+            const btn = document.getElementById('fullscreenBtn'), tooltip = document.getElementById('fullscreenTooltip');
+            if (document.fullscreenElement || document.webkitFullscreenElement) { btn.classList.add('is-fullscreen'); tooltip.textContent = 'Sair da Tela Cheia'; }
+            else { btn.classList.remove('is-fullscreen'); tooltip.textContent = 'Tela Cheia'; }
+        }
+        document.addEventListener('keydown', function(e) { if (e.key === 'F11') { e.preventDefault(); toggleFullscreen(); } });
+    </script>
+</body>
+</html>
